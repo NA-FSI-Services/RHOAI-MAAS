@@ -302,7 +302,7 @@ curl -i -X POST "${SIM_URL}/v1/chat/completions" \
 
 ```bash
 oc get maassubscription demo-retail-analyst demo-risk-analytics demo-platform-ops -n models-as-a-service \
-  -o custom-columns=NAME:.metadata.name,GROUPS:.spec.owner.groups[*].name
+  -o 'custom-columns=NAME:.metadata.name,GROUPS:.spec.owner.groups[*].name'
 oc get group maas-demo-retail-analyst maas-demo-risk-analytics maas-demo-platform-ops -o custom-columns=NAME:.metadata.name,USERS:.users
 ```
 

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: maas-grafana
+  labels:
+    app.kubernetes.io/part-of: maas-observability
+    maas.opendatahub.io/day6: observability-demo

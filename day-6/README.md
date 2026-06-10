@@ -96,6 +96,23 @@ If you see **Service Unavailable**, see [OBSERVABILITY-TROUBLESHOOTING.md](OBSER
 
 Administrator → **Observe → Metrics** → query `authorized_hits{subscription!=""}` (see troubleshooting doc).
 
+### Optional: Grafana dashboard (tokens per user and model)
+
+Community Grafana operator + dashboard querying platform Thanos (`authorized_hits` with `user` and `model` labels from `maas-telemetry`):
+
+```bash
+cd PoC/day-6
+./apply-grafana-dashboard.sh
+```
+
+| Panel | PromQL (summary) |
+|-------|------------------|
+| Tokens/min by user | `sum by (user) (rate(authorized_hits{...}[5m])) * 60` |
+| Tokens/min by model | `sum by (model) (rate(authorized_hits{...}[5m])) * 60` |
+| User × model table | `sum by (user, model, subscription, cost_center) (increase(...))` |
+
+Dashboard JSON only (import into an existing Grafana): [dashboards/maas-token-usage.json](dashboards/maas-token-usage.json). Datasource uid: `maas-prometheus`.
+
 ---
 
 ## File index
@@ -111,6 +128,9 @@ Administrator → **Observe → Metrics** → query `authorized_hits{subscriptio
 | [manifests/demo-auth-policies.yaml](manifests/demo-auth-policies.yaml) | Auth policies |
 | [OBSERVABILITY-TROUBLESHOOTING.md](OBSERVABILITY-TROUBLESHOOTING.md) | Service Unavailable fix + OCP console fallbacks |
 | [fix-perses-datasource-secret.sh](fix-perses-datasource-secret.sh) | Refresh Thanos auth secret for Perses |
+| [apply-grafana-dashboard.sh](apply-grafana-dashboard.sh) | Deploy Grafana + token usage dashboard |
+| [dashboards/maas-token-usage.json](dashboards/maas-token-usage.json) | Importable Grafana dashboard JSON |
+| [manifests/grafana/](manifests/grafana/) | Grafana operator + dashboard manifests |
 | [manifests/dsci-metrics-storage.yaml](manifests/dsci-metrics-storage.yaml) | Enable RHOAI MonitoringStack + Perses |
 | [manifests/opentelemetry-operator/subscription.yaml](manifests/opentelemetry-operator/subscription.yaml) | OpenTelemetry operator |
 | [05-validation.txt](05-validation.txt) | Post-install validation |

@@ -1,0 +1,9 @@
+=== Validation 2026-06-05T19:45:26Z ===
+cluster-observability-operator.v1.4.0   Cluster Observability Operator     1.4.0     cluster-observability-operator.v1.3.1   Succeeded
+NAME                           AGE
+dashboard-3-maas-usage-admin   7m11s
+NAME                  PHASE    ORG             COST
+demo-platform-ops     Active   org-platform   CC-PLATFORM-3001
+demo-retail-analyst   Active   org-retail     CC-RETAIL-1001
+demo-risk-analytics   Active   org-risk       CC-RISK-2001
+Enforced=True

@@ -1,0 +1,16 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: maas-token-usage
+  namespace: maas-grafana
+  labels:
+    app.kubernetes.io/part-of: maas-observability
+    maas.opendatahub.io/day6: observability-demo
+spec:
+  folder: MaaS
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  configMapRef:
+    key: maas-token-usage.json
+    name: maas-token-usage-dashboard

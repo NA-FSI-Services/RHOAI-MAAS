@@ -1,0 +1,31 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: maas-prometheus
+  namespace: maas-grafana
+  labels:
+    maas.opendatahub.io/day6: observability-demo
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: grafana
+  valuesFrom:
+    - targetPath: secureJsonData.httpHeaderValue1
+      valueFrom:
+        secretKeyRef:
+          name: maas-grafana-prometheus-token
+          key: authorization
+  datasource:
+    name: MaaS Prometheus
+    type: prometheus
+    uid: maas-prometheus
+    access: proxy
+    url: https://thanos-querier.openshift-monitoring.svc:9091
+    isDefault: true
+    editable: false
+    jsonData:
+      httpHeaderName1: Authorization
+      timeInterval: 30s
+      tlsSkipVerify: true
+    secureJsonData:
+      httpHeaderValue1: ${authorization}
