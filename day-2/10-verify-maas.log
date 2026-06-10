@@ -1,0 +1,45 @@
+[0;34m[STEP][0m Phase 1: Infrastructure health checks
+[0;32m[INFO][0m Connected to: https://api.ocp.r527b.sandbox675.opentlc.com:6443
+[0;32m[INFO][0m MaaS URL: https://maas.apps.ocp.r527b.sandbox675.opentlc.com
+[0;32m[PASS][0m Gateway maas-default-gateway is Programmed
+[0;32m[PASS][0m PostgreSQL is running (1 replica(s))
+[0;32m[PASS][0m maas-api is running (1 replica(s))
+[0;32m[PASS][0m maas-controller is running (1 replica(s))
+[0;32m[PASS][0m Authorino is running
+[0;32m[PASS][0m ModelsAsServiceReady=True
+[0;32m[PASS][0m Health endpoint returns HTTP 200
+[0;34m[STEP][0m Phase 2: Deploy simulator model and MaaS resources
+namespace/llm configured
+namespace/models-as-a-service configured
+[0;32m[INFO][0m Ensured namespaces: llm, models-as-a-service
+[0;32m[INFO][0m Deploying simulator model...
+[0;32m[INFO][0m LLMInferenceService facebook-opt-125m-simulated already exists, skipping
+[0;32m[INFO][0m Deploying MaaSModelRef...
+maasmodelref.maas.opendatahub.io/facebook-opt-125m-simulated serverside-applied
+[0;32m[INFO][0m Deploying MaaSAuthPolicy...
+maasauthpolicy.maas.opendatahub.io/simulator-access serverside-applied
+[0;32m[INFO][0m Deploying MaaSSubscription...
+maassubscription.maas.opendatahub.io/simulator-subscription serverside-applied
+[0;32m[INFO][0m Waiting for simulator model pods...
+[0;32m[PASS][0m Simulator model pods are running
+[0;32m[INFO][0m Waiting for MaaSModelRef to be Ready...
+[0;32m[PASS][0m MaaSModelRef is Ready (endpoint: https://maas.apps.ocp.r527b.sandbox675.opentlc.com/llm/facebook-opt-125m-simulated)
+[0;34m[STEP][0m Phase 3: API verification
+[0;32m[INFO][0m Creating API key...
+[0;31m[FAIL][0m Failed to create API key
+[1;33m[WARN][0m Response: Internal Server Error.
+[0;34m[STEP][0m Phase 4: Auth enforcement
+[0;31m[FAIL][0m Skipping auth tests (no model URL)
+[0;34m[STEP][0m Phase 5: Rate limiting
+[0;31m[FAIL][0m Skipping rate limit test (missing API key or model URL)
+[0;34m[STEP][0m Phase 6: Cleanup (SKIPPED -- --no-cleanup)
+[0;32m[INFO][0m Test resources left in place. Run './work/rhoai-maas-guide/scripts/../manifests/06-verification/verify.sh --cleanup-only' to remove them.
+
+=========================================
+MaaS Verification Summary
+=========================================
+MaaS API URL:  https://maas.apps.ocp.r527b.sandbox675.opentlc.com
+Passed:        9
+Failed:        3
+Status:        SOME CHECKS FAILED
+=========================================

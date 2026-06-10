@@ -1,0 +1,28 @@
+# Dedicated subscription for OpenShift Lightspeed → MaaS gateway (Qwen3-4B).
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: demo-openshift-lightspeed
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/day7: lightspeed-maas
+  annotations:
+    openshift.io/display-name: "Demo — OpenShift Lightspeed via MaaS"
+    openshift.io/description: "Lightspeed consumes governed Qwen3-4B inference through the MaaS gateway"
+spec:
+  priority: 22
+  owner:
+    groups:
+      - name: system:authenticated
+  tokenMetadata:
+    organizationId: org-platform
+    costCenter: CC-LIGHTSPEED-4001
+    labels:
+      team: openshift-lightspeed
+      demo_persona: lightspeed
+  modelRefs:
+    - name: qwen3-4b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 50000
+          window: 1m

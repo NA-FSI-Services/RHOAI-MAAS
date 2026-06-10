@@ -1,0 +1,15 @@
+# External LiteLLM proxy at maas-rhdp.apps.maas.redhatworkshops.io
+# Provider type "openai" — OpenAI-compatible API (Technology Preview)
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: ExternalModel
+metadata:
+  name: codellama-7b-instruct
+  namespace: llm
+  labels:
+    maas.opendatahub.io/day5: litellm-external
+spec:
+  provider: openai
+  endpoint: maas-rhdp.apps.maas.redhatworkshops.io
+  targetModel: codellama-7b-instruct
+  credentialRef:
+    name: litellm-workshop-provider-key

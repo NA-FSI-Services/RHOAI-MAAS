@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nemo-poc-config
+  namespace: redhat-ods-applications
+  labels:
+    app.kubernetes.io/part-of: rhoai-poc
+    maas.opendatahub.io/day4: nemo-guardrails
+data:
+  config.yaml: |
+    rails:
+      config:
+        sensitive_data_detection:
+          input:
+            entities:
+              - EMAIL_ADDRESS
+              - PERSON
+              - PHONE_NUMBER
+        regex_detection:
+          input:
+            patterns:
+              - "\\b(password|secret|api[_-]?key|token)\\b"
+              - "\\b(credit\\s*card|ssn|social\\s*security)\\b"
+            case_insensitive: true
+      input:
+        flows:
+          - detect sensitive data on input
+          - regex check input
+  rails.co: |
+    # Built-in rails only — PoC demo (no LLM self-check)

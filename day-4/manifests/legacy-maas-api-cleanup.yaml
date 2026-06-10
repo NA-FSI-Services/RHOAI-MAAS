@@ -1,0 +1,17 @@
+# Marks legacy GitOps maas-api for removal. Apply scale/delete via run-day4-install.sh.
+# Operator-managed maas-api in redhat-ods-applications (8443 + PostgreSQL) is canonical.
+#
+# GitOps tracking: argocd.argoproj.io/tracking-id=models-as-a-service:...
+# ArgoCD may restore deleted resources — update the GitOps repo to remove maas-api namespace deployment.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: legacy-maas-api-deprecation
+  namespace: maas-api
+  labels:
+    maas.opendatahub.io/day4: legacy-cleanup
+data:
+  status: deprecated
+  reason: Duplicate maas-api without PostgreSQL; use redhat-ods-applications/maas-api:8443
+  canonical_namespace: redhat-ods-applications
+  gitops_action: Remove Deployment/HTTPRoute/AuthPolicy from models-as-a-service GitOps repo

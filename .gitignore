@@ -1,0 +1,27 @@
+# Local secrets — never commit
+day-1/demo-users-passwords.env
+day-3/demo-env.sh
+day-5/provider-key.env
+day-6/demo-users.env
+day-7/lightspeed-maas.env
+
+# Media (local recordings)
+vids/
+
+# Install / validation artifacts (cluster URLs, minted keys in logs)
+**/*install.log
+day-*/0*.txt
+day-*/05-*.txt
+day-*/06-*.txt
+day-*/07-*.txt
+day-*/08-*.txt
+day-*/10-*.txt
+day-*/05-auth-flows.txt
+day-1/multi-user-setup.log
+initial-state/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp

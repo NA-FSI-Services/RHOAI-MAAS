@@ -1,0 +1,50 @@
+# Allow htpasswd demo users to call POST /maas-api/v1/api-keys (subscription-scoped key minting).
+# Binds maas-viewer-role in models-as-a-service — maas-api validates subscription ownership.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-demo-retail-analyst-api
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/day6: observability-demo
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: maas-viewer-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-demo-retail-analyst
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-demo-risk-analytics-api
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/day6: observability-demo
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: maas-viewer-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-demo-risk-analytics
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-demo-platform-ops-api
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/day6: observability-demo
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: maas-viewer-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-demo-platform-ops

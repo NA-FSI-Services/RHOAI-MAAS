@@ -1,0 +1,68 @@
+=== Full auth flow with correct model IDs ===
+A) No auth -> expect 401
+HTTP 401
+B) Basic key + simulator -> expect 200
+HTTP 200
+C) Basic key + granite -> expect 403
+HTTP 403
+D) Advanced key + granite -> expect 200
+HTTP 200
+
+=== Rate limit burst (16 requests) ===
+Results: 3 x 200, 13 x 429
+
+=== Observability dashboard patch ===
+odhdashboardconfig.opendatahub.io/odh-dashboard-config patched (no change)
+observabilityDashboard=true
+
+=== verify-maas.sh ===
+[0;34m[STEP][0m Phase 1: Infrastructure health checks
+[0;32m[INFO][0m Connected to: https://api.ocp.r527b.sandbox675.opentlc.com:6443
+[0;32m[INFO][0m MaaS URL: https://maas.apps.ocp.r527b.sandbox675.opentlc.com
+[0;32m[PASS][0m Gateway maas-default-gateway is Programmed
+[0;32m[PASS][0m PostgreSQL is running (1 replica(s))
+[0;32m[PASS][0m maas-api is running (1 replica(s))
+[0;32m[PASS][0m maas-controller is running (1 replica(s))
+[0;32m[PASS][0m Authorino is running
+[0;32m[PASS][0m ModelsAsServiceReady=True
+[0;32m[PASS][0m Health endpoint returns HTTP 200
+[0;34m[STEP][0m Phase 2: Deploy simulator model and MaaS resources
+namespace/llm configured
+namespace/models-as-a-service configured
+[0;32m[INFO][0m Ensured namespaces: llm, models-as-a-service
+[0;32m[INFO][0m Deploying simulator model...
+[0;32m[INFO][0m LLMInferenceService facebook-opt-125m-simulated already exists, skipping
+[0;32m[INFO][0m Deploying MaaSModelRef...
+maasmodelref.maas.opendatahub.io/facebook-opt-125m-simulated serverside-applied
+[0;32m[INFO][0m Deploying MaaSAuthPolicy...
+maasauthpolicy.maas.opendatahub.io/simulator-access serverside-applied
+[0;32m[INFO][0m Deploying MaaSSubscription...
+maassubscription.maas.opendatahub.io/simulator-subscription serverside-applied
+[0;32m[INFO][0m Waiting for simulator model pods...
+[0;32m[PASS][0m Simulator model pods are running
+[0;32m[INFO][0m Waiting for MaaSModelRef to be Ready...
+[0;32m[PASS][0m MaaSModelRef is Ready (endpoint: https://maas.apps.ocp.r527b.sandbox675.opentlc.com/llm/facebook-opt-125m-simulated)
+[0;34m[STEP][0m Phase 3: API verification
+[0;32m[INFO][0m Creating API key...
+[0;32m[PASS][0m API key created (id: 1a3ed0c5-9cf9-4ed9-865a-6bf00e58ac75)
+[0;32m[PASS][0m Models available (1 total, first: facebook/opt-125m)
+[0;32m[INFO][0m Testing inference...
+[0;32m[PASS][0m Inference returned HTTP 200
+[0;32m[INFO][0m Response: The rest is silence.  Today is a nice sunny day. Today is a nice sunny day. To b...
+[0;34m[STEP][0m Phase 4: Auth enforcement
+[0;32m[PASS][0m Unauthenticated request rejected (HTTP 401)
+[0;32m[PASS][0m Invalid token rejected (HTTP 401)
+[0;34m[STEP][0m Phase 5: Rate limiting
+[0;32m[INFO][0m Sending 16 rapid requests to trigger rate limit...
+[0;32m[PASS][0m Rate limiting triggered (3 successes, 13 rate-limited out of 16)
+[0;34m[STEP][0m Phase 6: Cleanup (SKIPPED -- --no-cleanup)
+[0;32m[INFO][0m Test resources left in place. Run './work/rhoai-maas-guide/scripts/../manifests/06-verification/verify.sh --cleanup-only' to remove them.
+
+=========================================
+MaaS Verification Summary
+=========================================
+MaaS API URL:  https://maas.apps.ocp.r527b.sandbox675.opentlc.com
+Passed:        15
+Failed:        0
+Status:        ALL CHECKS PASSED
+=========================================

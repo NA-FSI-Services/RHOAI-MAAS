@@ -1,0 +1,29 @@
+# OpenShift groups for MaaS demo personas (htpasswd users).
+# Apply after setup-multi-user.sh creates htpasswd IdP users.
+---
+apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: maas-demo-retail-analyst
+  labels:
+    maas.opendatahub.io/day1: multi-user-demo
+users:
+  - demo-retail-analyst
+---
+apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: maas-demo-risk-analytics
+  labels:
+    maas.opendatahub.io/day1: multi-user-demo
+users:
+  - demo-risk-analyst
+---
+apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: maas-demo-platform-ops
+  labels:
+    maas.opendatahub.io/day1: multi-user-demo
+users:
+  - demo-platform-ops

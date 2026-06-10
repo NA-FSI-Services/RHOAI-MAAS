@@ -1,0 +1,60 @@
+=== Day 2 Final State ===
+Captured: 2026-06-05T18:41:08Z
+
+=== DSC ===
+phase=Not Ready modelsAsService=Managed
+ModelsAsServiceReady=True (MaaS platform manifests applied and maas-api deployment is available)
+
+=== MaaS CRs ===
+NAMESPACE   NAME                                                           PHASE   ENDPOINT                                                                             HTTPROUTE                                  GATEWAY                AGE
+llm         maasmodelref.maas.opendatahub.io/facebook-opt-125m-simulated   Ready   https://maas.apps.ocp.r527b.sandbox675.opentlc.com/llm/facebook-opt-125m-simulated   facebook-opt-125m-simulated-kserve-route   maas-default-gateway   12m
+llm         maasmodelref.maas.opendatahub.io/granite-4-tiny-gpu            Ready   https://maas.apps.ocp.r527b.sandbox675.opentlc.com/llm/granite-4-tiny-gpu            granite-4-tiny-gpu-kserve-route            maas-default-gateway   12m
+
+NAMESPACE             NAME                                                            PHASE    PRIORITY   AGE
+models-as-a-service   maassubscription.maas.opendatahub.io/granite-tiny-gpu-free      Active   10         12m
+models-as-a-service   maassubscription.maas.opendatahub.io/granite-tiny-gpu-premium   Active   20         12m
+models-as-a-service   maassubscription.maas.opendatahub.io/simulator-free             Active   10         12m
+models-as-a-service   maassubscription.maas.opendatahub.io/simulator-premium          Active   20         12m
+models-as-a-service   maassubscription.maas.opendatahub.io/simulator-subscription     Active   10         14s
+
+NAMESPACE             NAME                                        READY   REASON       AGE
+models-as-a-service   tenant.maas.opendatahub.io/default-tenant   True    Reconciled   12m
+
+=== LLMInferenceServices ===
+NAMESPACE   NAME                          URL                                                                                 READY   REASON   AGE   URLS
+llm         facebook-opt-125m-simulated   http://maas.apps.ocp.r527b.sandbox675.opentlc.com/llm/facebook-opt-125m-simulated   True             12m   http://maas-default-gateway-openshift-default.openshift-ingress.svc.cluster.local/llm/facebook-opt-125m-simulated
+llm         granite-4-tiny-gpu            http://maas.apps.ocp.r527b.sandbox675.opentlc.com/llm/granite-4-tiny-gpu            True             12m   http://maas-default-gateway-openshift-default.openshift-ingress.svc.cluster.local/llm/granite-4-tiny-gpu
+llm         qwen3-4b-instruct             http://maas.apps.ocp.r527b.sandbox675.opentlc.com/llm/qwen3-4b-instruct             True             27h   http://maas-default-gateway-openshift-default.openshift-ingress.svc.cluster.local/llm/qwen3-4b-instruct
+
+=== Pods (llm) ===
+NAME                                                  READY   STATUS    RESTARTS   AGE   IP            NODE                                        NOMINATED NODE   READINESS GATES
+facebook-opt-125m-simulated-kserve-6dddb45669-8pj2d   1/1     Running   0          11m   10.131.0.61   ip-10-0-27-212.us-east-2.compute.internal   <none>           <none>
+granite-4-tiny-gpu-kserve-794ffc5987-fcvkg            2/2     Running   0          12m   10.130.4.20   ip-10-0-40-203.us-east-2.compute.internal   <none>           <none>
+qwen3-4b-instruct-kserve-7468776d69-vwsm5             2/2     Running   0          27h   10.128.4.20   ip-10-0-20-178.us-east-2.compute.internal   <none>           <none>
+
+=== maas-api deployments ===
+NAME                                                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/maas-api                                             1/1     1            1           12m
+deployment.apps/postgres                                             1/1     1            1           13m
+NAME                                                                  READY   STATUS    RESTARTS       AGE
+pod/maas-api-59d9d686b8-hdccf                                         1/1     Running   0              12m
+pod/postgres-774454667-z4cfz                                          1/1     Running   0              13m
+NAME                                                                   TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)                                                                   AGE
+service/maas-api                                                       ClusterIP   172.30.224.245   <none>        8443/TCP                                                                  12m
+service/postgres                                                       ClusterIP   172.30.176.190   <none>        5432/TCP                                                                  13m
+NAME                                                  HOSTNAMES   AGE
+httproute.gateway.networking.k8s.io/maas-api-route                12m
+NAME                       READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/maas-api   1/1     1            1           27h
+
+NAME                            READY   STATUS    RESTARTS   AGE
+pod/maas-api-5f87495655-2ttzr   1/1     Running   0          27h
+
+NAME               TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/maas-api   ClusterIP   172.30.230.120   <none>        8080/TCP   27h
+
+=== Gateway smoke ===
+MAAS_URL=https://maas.apps.ocp.r527b.sandbox675.opentlc.com
+GET /v1/models: HTTP 500
+GET /maas-api/health: HTTP 200
+GET /llm/granite-4-tiny-gpu/v1/models: HTTP 500

@@ -1,0 +1,23 @@
+# OLSConfig — route OpenShift Lightspeed to the MaaS gateway (OpenAI-compatible).
+# URL is set at install time by run-day7-install.sh (inline OLSConfig apply).
+apiVersion: ols.openshift.io/v1alpha1
+kind: OLSConfig
+metadata:
+  name: cluster
+  labels:
+    maas.opendatahub.io/day7: lightspeed-maas
+spec:
+  llm:
+    providers:
+      - name: maas-gateway
+        type: openai
+        url: https://maas.example.com/v1
+        credentialsSecretRef:
+          name: maas-gateway-api-key
+        models:
+          - name: qwen3-4b-instruct
+            parameters:
+              toolBudgetRatio: 0.5
+  ols:
+    defaultProvider: maas-gateway
+    defaultModel: qwen3-4b-instruct

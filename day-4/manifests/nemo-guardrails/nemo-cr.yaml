@@ -1,0 +1,18 @@
+apiVersion: trustyai.opendatahub.io/v1alpha1
+kind: NemoGuardrails
+metadata:
+  name: nemo-poc-guardrails
+  namespace: redhat-ods-applications
+  annotations:
+    security.opendatahub.io/enable-auth: "true"
+  labels:
+    app.kubernetes.io/part-of: rhoai-poc
+    maas.opendatahub.io/day4: nemo-guardrails
+spec:
+  nemoConfigs:
+    - name: nemo-poc-config
+      configMaps:
+        - nemo-poc-config
+  env:
+    - name: OPENAI_API_KEY
+      value: not-used

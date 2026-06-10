@@ -1,0 +1,38 @@
+# Day 6 persona isolation: remove Granite from the Day 5 catch-all auth policy.
+# Granite remains available via demo-risk-analytics-access and demo-platform-ops-access.
+# Codellama on this policy is unchanged (also covered by simulator-access).
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: granite-tiny-gpu-access
+  namespace: models-as-a-service
+  annotations:
+    openshift.io/display-name: "Granite Tiny GPU Access (Day 6 restricted)"
+    openshift.io/description: "No longer grants system:authenticated access to Granite; persona policies only"
+  labels:
+    maas.opendatahub.io/day6: observability-demo
+spec:
+  subjects:
+    groups:
+      - name: system:authenticated
+  modelRefs:
+    - name: codellama-7b-instruct
+      namespace: llm
+---
+# Prevent retail (system:authenticated) from holding a Granite entitlement via Day 5 free/premium tiers.
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: granite-tiny-gpu-premium
+  namespace: models-as-a-service
+spec:
+  owner:
+    groups:
+      - name: system:authenticated
+  priority: 20
+  modelRefs:
+    - name: codellama-7b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 100000
+          window: 1m

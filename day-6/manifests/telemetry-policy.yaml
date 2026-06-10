@@ -1,0 +1,24 @@
+# Enhanced gateway telemetry for showback labels (subscription, org, cost center).
+# Coexists with GitOps user-group policy; maas-telemetry adds billing attribution labels.
+apiVersion: extensions.kuadrant.io/v1alpha1
+kind: TelemetryPolicy
+metadata:
+  name: maas-telemetry
+  namespace: openshift-ingress
+  labels:
+    app.kubernetes.io/part-of: maas-observability
+    maas.opendatahub.io/day6: observability-demo
+spec:
+  metrics:
+    default:
+      labels:
+        model: responseBodyJSON("/model")
+        user: auth.identity.userid
+        tier: auth.identity.tier
+        subscription: auth.identity.selected_subscription
+        organization_id: auth.identity.subscription_info.organizationId
+        cost_center: auth.identity.subscription_info.costCenter
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: Gateway
+    name: maas-default-gateway

@@ -1,0 +1,106 @@
+# Demo personas for observability showback — distinct subscriptions, rate limits, and cost metadata.
+# API keys are minted by run-day6-install.sh (not stored in git).
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: demo-retail-analyst
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/day6: observability-demo
+  annotations:
+    openshift.io/display-name: "Demo — Retail Analyst Team"
+    openshift.io/description: "Low-volume simulator + external model usage (Retail LOB)"
+spec:
+  priority: 11
+  owner:
+    groups:
+      - name: maas-demo-retail-analyst
+  tokenMetadata:
+    organizationId: org-retail
+    costCenter: CC-RETAIL-1001
+    labels:
+      team: retail-analytics
+      demo_persona: retail-analyst
+  modelRefs:
+    - name: facebook-opt-125m-simulated
+      namespace: llm
+      tokenRateLimits:
+        - limit: 3000
+          window: 1m
+    - name: codellama-7b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 3000
+          window: 1m
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: demo-risk-analytics
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/day6: observability-demo
+  annotations:
+    openshift.io/display-name: "Demo — Risk Analytics Team"
+    openshift.io/description: "High-volume Granite + external model usage (Risk LOB)"
+spec:
+  priority: 21
+  owner:
+    groups:
+      - name: maas-demo-risk-analytics
+  tokenMetadata:
+    organizationId: org-risk
+    costCenter: CC-RISK-2001
+    labels:
+      team: risk-analytics
+      demo_persona: risk-analyst
+  modelRefs:
+    - name: granite-4-tiny-gpu
+      namespace: llm
+      tokenRateLimits:
+        - limit: 80000
+          window: 1m
+    - name: codellama-7b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 20000
+          window: 1m
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: demo-platform-ops
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/day6: observability-demo
+  annotations:
+    openshift.io/display-name: "Demo — Platform Engineering"
+    openshift.io/description: "Cross-model platform team — balanced usage across all endpoints"
+spec:
+  priority: 15
+  owner:
+    groups:
+      - name: maas-demo-platform-ops
+  tokenMetadata:
+    organizationId: org-platform
+    costCenter: CC-PLATFORM-3001
+    labels:
+      team: platform-engineering
+      demo_persona: platform-ops
+  modelRefs:
+    - name: facebook-opt-125m-simulated
+      namespace: llm
+      tokenRateLimits:
+        - limit: 10000
+          window: 1m
+    - name: granite-4-tiny-gpu
+      namespace: llm
+      tokenRateLimits:
+        - limit: 25000
+          window: 1m
+    - name: codellama-7b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 10000
+          window: 1m

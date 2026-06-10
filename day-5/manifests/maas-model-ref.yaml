@@ -1,0 +1,11 @@
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSModelRef
+metadata:
+  name: codellama-7b-instruct
+  namespace: llm
+  labels:
+    maas.opendatahub.io/day5: litellm-external
+spec:
+  modelRef:
+    kind: ExternalModel
+    name: codellama-7b-instruct

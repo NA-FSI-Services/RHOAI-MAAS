@@ -1,0 +1,19 @@
+# Enable RHOAI observability stack (MonitoringStack + Perses backend for MaaS dashboard).
+# Without metrics.storage, Monitoring CR reports PersesAvailable=False and the
+# RHOAI Observe & monitor dashboard returns "Service Unavailable".
+#
+# Apply: oc apply -f day-6/manifests/dsci-metrics-storage.yaml
+# Or use run-day6-install.sh (Step 1b).
+apiVersion: dscinitialization.opendatahub.io/v2
+kind: DSCInitialization
+metadata:
+  name: default-dsci
+spec:
+  monitoring:
+    managementState: Managed
+    namespace: redhat-ods-monitoring
+    metrics:
+      replicas: 1
+      storage:
+        size: 5Gi
+        retention: 7d

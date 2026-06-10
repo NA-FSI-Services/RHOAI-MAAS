@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payload-pre-processing
+  namespace: openshift-ingress
+  labels:
+    app: payload-pre-processing
+    app.kubernetes.io/part-of: models-as-a-service
+    maas.opendatahub.io/day4: bbr-fix
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payload-pre-processing
+  template:
+    metadata:
+      labels:
+        app: payload-pre-processing
+    spec:
+      serviceAccountName: payload-processing
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: payload-pre-processing
+          image: quay.io/opendatahub/odh-ai-gateway-payload-processing:odh-stable
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+          args:
+            - "--streaming"
+            - --v
+            - "3"
+            - --plugin
+            - "$(MODEL_TO_HEADER)"
+            - --tracing=false
+          env:
+            - name: MODEL_TO_HEADER
+              valueFrom:
+                configMapKeyRef:
+                  name: payload-processing-plugins
+                  key: model-to-header-plugin
+          ports:
+            - containerPort: 9004
+              name: grpc
+              protocol: TCP
+          resources:
+            requests:
+              memory: 32Mi
+              cpu: 25m
+            limits:
+              memory: 128Mi
+              cpu: 200m

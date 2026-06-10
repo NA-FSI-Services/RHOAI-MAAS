@@ -1,0 +1,15 @@
+# Register Qwen3-4B on MaaS for Lightspeed (tool calling via hermes parser).
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSModelRef
+metadata:
+  name: qwen3-4b-instruct
+  namespace: llm
+  labels:
+    maas.opendatahub.io/day7: lightspeed-maas
+  annotations:
+    openshift.io/display-name: "Qwen3 4B Instruct 2507"
+    openshift.io/description: "Instruct model with vLLM tool calling for OpenShift Lightspeed"
+spec:
+  modelRef:
+    kind: LLMInferenceService
+    name: qwen3-4b-instruct

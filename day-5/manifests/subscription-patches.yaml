@@ -1,0 +1,48 @@
+# Patch existing subscriptions to include the external model.
+# Apply with run-day5-install.sh (json patch) or merge manually in console.
+#
+# simulator-free (basic key) + granite-tiny-gpu-premium (advanced key)
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: simulator-free
+  namespace: models-as-a-service
+spec:
+  modelRefs:
+    - name: facebook-opt-125m-simulated
+      namespace: llm
+      tokenRateLimits:
+        - limit: 100000
+          window: 1m
+    - name: codellama-7b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 100000
+          window: 1m
+  owner:
+    groups:
+      - name: system:authenticated
+  priority: 10
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: granite-tiny-gpu-premium
+  namespace: models-as-a-service
+spec:
+  modelRefs:
+    - name: granite-4-tiny-gpu
+      namespace: llm
+      tokenRateLimits:
+        - limit: 100000
+          window: 1m
+    - name: codellama-7b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 100000
+          window: 1m
+  owner:
+    groups:
+      - name: system:authenticated
+  priority: 20

@@ -1,0 +1,54 @@
+# Authorize demo subscriptions to access their model endpoints.
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: demo-retail-analyst-access
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/day6: observability-demo
+spec:
+  subjects:
+    groups:
+      - name: maas-demo-retail-analyst
+  modelRefs:
+    - name: facebook-opt-125m-simulated
+      namespace: llm
+    - name: codellama-7b-instruct
+      namespace: llm
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: demo-risk-analytics-access
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/day6: observability-demo
+spec:
+  subjects:
+    groups:
+      - name: maas-demo-risk-analytics
+  modelRefs:
+    - name: granite-4-tiny-gpu
+      namespace: llm
+    - name: codellama-7b-instruct
+      namespace: llm
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: demo-platform-ops-access
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/day6: observability-demo
+spec:
+  subjects:
+    groups:
+      - name: maas-demo-platform-ops
+  modelRefs:
+    - name: facebook-opt-125m-simulated
+      namespace: llm
+    - name: granite-4-tiny-gpu
+      namespace: llm
+    - name: codellama-7b-instruct
+      namespace: llm

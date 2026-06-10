@@ -1,0 +1,5 @@
+# Copy to demo-env.sh and remint keys (do not commit demo-env.sh)
+# Quick path: ./day-3/remint-demo-keys.sh
+export MAAS_URL="https://maas.${CLUSTER_DOMAIN}"
+export BASIC_USER_KEY="sk-oai-..."
+export ADVANCED_USER_KEY="sk-oai-..."
