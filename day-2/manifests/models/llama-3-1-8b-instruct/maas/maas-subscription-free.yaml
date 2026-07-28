@@ -1,0 +1,19 @@
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: llama-3-1-8b-instruct-free
+  namespace: models-as-a-service
+  annotations:
+    openshift.io/display-name: "Llama 3.1 8B Free Tier"
+spec:
+  owner:
+    groups:
+      - name: system:authenticated
+    users: []
+  modelRefs:
+    - name: llama-3-1-8b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 500
+          window: 1m
+  priority: 10

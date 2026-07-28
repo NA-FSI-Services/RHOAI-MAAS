@@ -1,0 +1,24 @@
+# Patch local Llama 3.1 8B for OpenShift Lightspeed (tool_choice: auto).
+# Apply with: oc patch llminferenceservice llama-3-1-8b-instruct -n llm --type=merge --patch-file=...
+# Or use run-day7-install.sh which merges these args.
+apiVersion: serving.kserve.io/v1alpha2
+kind: LLMInferenceService
+metadata:
+  name: llama-3-1-8b-instruct
+  namespace: llm
+spec:
+  template:
+    containers:
+      - name: main
+        args:
+          - --served-model-name={{.Name}}
+          - --model=/mnt/models
+          - --enable-ssl-refresh
+          - --ssl-certfile=/var/run/kserve/tls/tls.crt
+          - --ssl-keyfile=/var/run/kserve/tls/tls.key
+          - --enable-force-include-usage
+          # 32k needed for Lightspeed (system+RAG+24 MCP tools); 8k overflows with max_completion_tokens
+          - --max-model-len=32768
+          - --gpu-memory-utilization=0.90
+          - --enable-auto-tool-choice
+          - --tool-call-parser=llama3_json

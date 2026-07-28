@@ -4,6 +4,9 @@ day-3/demo-env.sh
 day-5/provider-key.env
 day-6/demo-users.env
 day-7/lightspeed-maas.env
+CLIENT-TEST-ACCESS.md
+CLIENT-TEST-EMAIL.md
+day-1/client-test-users-setup.log
 
 # Media (local recordings)
 vids/

@@ -1,0 +1,28 @@
+# OpenShift Lightspeed Operator (prerequisite for OLSConfig / console assistant)
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: openshift-lightspeed
+  labels:
+    openshift.io/cluster-monitoring: "true"
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: openshift-lightspeed
+  namespace: openshift-lightspeed
+spec:
+  targetNamespaces:
+    - openshift-lightspeed
+---
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: lightspeed-operator
+  namespace: openshift-lightspeed
+spec:
+  channel: stable
+  installPlanApproval: Automatic
+  name: lightspeed-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace

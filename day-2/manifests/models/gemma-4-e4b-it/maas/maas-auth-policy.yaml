@@ -1,0 +1,15 @@
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: gemma-4-e4b-it-access
+  namespace: models-as-a-service
+  annotations:
+    openshift.io/display-name: "Gemma 4 E4B Access"
+spec:
+  modelRefs:
+    - name: gemma-4-e4b-it
+      namespace: llm
+  subjects:
+    groups:
+      - name: system:authenticated
+    users: []

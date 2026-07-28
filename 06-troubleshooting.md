@@ -427,6 +427,33 @@ Expected: health **200**, simulator no-auth **401**.
 
 ---
 
+## RHOAI dashboard (`rh-ai`) not responding / HTTP 503
+
+### Problem
+
+`https://rh-ai.<cluster-domain>` hangs or returns **503**. `rhods-dashboard` pods may still be Running.
+
+### Root cause
+
+The **data-science-gateway** Envoy pod is the front door for the AI console. Default memory limit is **1Gi**; under Observe/Perses load it can be **OOMKilled** (`exitCode: 137`) and enter CrashLoopBackOff.
+
+```bash
+oc get pods -n openshift-ingress -l gateway.networking.k8s.io/gateway-name=data-science-gateway
+oc get pod -n openshift-ingress -l gateway.networking.k8s.io/gateway-name=data-science-gateway \
+  -o jsonpath='{.items[0].status.containerStatuses[0].lastState.terminated}' ; echo
+```
+
+### Fix
+
+Raise istio-proxy limits to **2Gi** via the Gateway `parametersRef` ConfigMap (same pattern as `maas-gateway-options`):
+
+```bash
+./day-2/fix-data-science-gateway-memory.sh
+# Expect: memory limit: 2Gi and curl -sk -o /dev/null -w "%{http_code}\n" "https://rh-ai.$(oc get ingresses.config/cluster -o jsonpath='{.spec.domain}')/" → 302
+```
+
+---
+
 ## Gateway Returns 503 (Service Unavailable)
 
 ### Problem
@@ -528,6 +555,109 @@ Ensure TPM limit is low enough (e.g., 2000) and prompts are large enough to cons
 
 ---
 
+## Gen AI playground — models unavailable (`fake` API token)
+
+### Problem
+
+In **Gen AI studio → Playground**, every MaaS model shows:
+
+```text
+This model is unavailable. Check the model's deployment status and resolve any issues.
+Update the playground's configuration to refresh the list.
+```
+
+LLMInferenceServices / MaaSModelRefs may still be **Ready**.
+
+### Root cause
+
+Per-project `OGXServer` (`lsd-genai-playground`) is created with placeholder env:
+
+```text
+VLLM_API_TOKEN_1=fake
+VLLM_API_TOKEN_2=fake
+VLLM_API_TOKEN_3=fake
+```
+
+OGX then calls MaaS with `Authorization: Bearer fake` → **401**, and marks providers unavailable. New playgrounds also get a broken in-cluster `base_url` (`...svc...//v1`) instead of `https://maas.<domain>/llm/<model>/v1`.
+
+### Fix (preferred)
+
+After **Try in playground** creates the OGXServer in your project:
+
+```bash
+./scripts/fix-genai-playground-maas.sh <project-namespace> lob-admin
+# persona example: ./scripts/fix-genai-playground-maas.sh maas-demo-retail lob-retail
+```
+
+Hard-refresh the playground. **Do not** click **Update the playground's configuration** afterward (UI regenerates broken defaults).
+
+### Fix (manual)
+
+Mint a key for the admin (or persona) subscription and patch the OGXServer:
+
+```bash
+MAAS_URL="https://maas.$(oc get ingresses.config/cluster -o jsonpath='{.spec.domain}')"
+# As the playground user (htpasswd admin / persona), mint:
+curl -sk -X POST "${MAAS_URL}/maas-api/v1/api-keys" \
+  -H "Authorization: Bearer $(oc whoami -t)" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"playground-key","expiresIn":"720h","subscription":"lob-admin"}'
+# Use subscription matching the user: lob-admin | lob-retail | lob-risk | ...
+
+# Patch tokens on the project's OGXServer (replace NAMESPACE and KEY):
+NS=admin-ai-project
+KEY='sk-oai-...'   # from mint response — do not commit
+oc get ogxserver lsd-genai-playground -n "$NS" -o json | python3 -c '
+import json,sys,subprocess
+d=json.load(sys.stdin); key=sys.argv[1]
+env=d["spec"]["workload"]["overrides"].setdefault("env",[])
+by={e["name"]:e for e in env}
+for n in ("VLLM_API_TOKEN_1","VLLM_API_TOKEN_2","VLLM_API_TOKEN_3"):
+    by.setdefault(n,{"name":n}); by[n]["value"]=key
+    if by[n] not in env: env.append(by[n])
+open("/tmp/ogx-play.json","w").write(json.dumps(d))
+' "$KEY"
+oc replace -f /tmp/ogx-play.json
+oc rollout restart deploy/lsd-genai-playground -n "$NS"
+```
+
+Hard-refresh the playground (or **Update the playground's configuration**). Local Llama/Gemma should become available.
+
+**Note:** External LiteLLM models may still fail OGX `GET .../v1/models` (provider key injection covers chat, not always model listing). Chat can still work for registered models; prefer local GPU models in the playground demo.
+
+### Related: new playground in `llm` (or other ns) returns HTTP 500 on send
+
+UI auto-config often sets:
+
+1. `VLLM_API_TOKEN_*=fake`
+2. `base_url: http://maas-default-gateway-...svc/...//v1` (in-cluster HTTP root — **404**; MaaS needs `https://maas.<domain>/llm/<model>/v1`)
+3. HF-style `model_id` (e.g. `google/gemma-4-E4B-it`) instead of the served id (`gemma-4-e4b-it`)
+
+Fix the `llama-stack-config` ConfigMap base URLs + model ids, set real tokens on the `OGXServer`, restart `deploy/lsd-genai-playground`, then hard-refresh the UI and re-select the model.
+
+### Related: playground chat HTTP 500 (`/gen-ai/api/v1/lsd/responses`)
+
+Even when OGX can chat successfully, the Gen AI UI BFF may return **500** if **TrustyAI is Removed**:
+
+```text
+failed to list NemoGuardrails CRs: trustyai.opendatahub.io/v1alpha1: no matches
+POST /gen-ai/api/v1/lsd/responses?namespace=<project>
+```
+
+This is a product defect in RHOAI 3.5-ea Gen AI: NeMo Guardrails discovery is a hard failure path for chat, even when guardrails are unused.
+
+**Workaround:** enable TrustyAI so the CRDs exist (NeMo CR itself is optional):
+
+```bash
+oc patch dsc default-dsc --type=merge -p \
+  '{"spec":{"components":{"trustyai":{"managementState":"Managed","mcpGuardrailsMode":false}}}}'
+# wait until: oc get crd nemoguardrails.trustyai.opendatahub.io
+```
+
+Optional Day 4 NeMo deploy: `oc apply -f day-4/manifests/nemo-guardrails/`.
+
+---
+
 ## Gen AI playground — ConfigMap forbidden (wrong project)
 
 ### Problem
@@ -582,6 +712,50 @@ Expected: `yes` after the user has created `maas-demo-retail` via the RHOAI UI.
 **Home → Projects → Create Project** with the same name while logged in as the persona — equivalent to the RHOAI flow.
 
 See [MULTI-USER-ACCESS.md](MULTI-USER-ACCESS.md) and [07-ui-based-demonstration-steps.md](07-ui-based-demonstration-steps.md).
+
+---
+
+## Observability dashboard — `invalid character 'q'` / IPP BadRequest
+
+### Problem
+
+RHOAI Console → **Observe & monitor → Dashboard** panels all show:
+
+```text
+inference error: BadRequest - failed to parse request body: invalid character 'q' looking for beginning of value
+```
+
+### Root cause
+
+MaaS **payload-pre-processing** ExtProc expects a JSON LLM body. PromQL datasource calls send `application/x-www-form-urlencoded` (`query=...`). When EnvoyFilters `payload-processing` / `payload-processing-extproc-attach` are scoped with Gateway `targetRefs` only, ExtProc can attach to the **data-science-gateway** (`rh-ai`) as well as `maas-default-gateway`, so Observe traffic hits IPP and fails on the first character `q`.
+
+### Fix
+
+Pin both EnvoyFilters to MaaS gateway pods with `workloadSelector` (OpenShift allows only one of `targetRefs` or `workloadSelector`):
+
+```bash
+# Day-5 re-apply (preferred)
+./day-5/run-day5-install.sh
+
+# Or one-shot replace (both filters):
+python3 - <<'PY'
+import json, subprocess
+for ef in ["payload-processing", "payload-processing-extproc-attach"]:
+    d = json.loads(subprocess.check_output(
+        ["oc", "get", "envoyfilter", ef, "-n", "openshift-ingress", "-o", "json"]))
+    d["spec"].pop("targetRefs", None)
+    d["spec"]["workloadSelector"] = {
+        "labels": {"gateway.networking.k8s.io/gateway-name": "maas-default-gateway"}
+    }
+    path = f"/tmp/{ef}-ws.json"
+    open(path, "w").write(json.dumps(d))
+    subprocess.check_call(["oc", "replace", "-f", path])
+PY
+oc delete pod -n openshift-ingress -l gateway.networking.k8s.io/gateway-name=data-science-gateway
+oc delete pod -n openshift-ingress -l gateway.networking.k8s.io/gateway-name=maas-default-gateway
+```
+
+Confirm Observe no longer returns the IPP message (e.g. form POST to `/perses/api/health` should reach Perses, not ExtProc), and MaaS chat completions still return 200.
 
 ---
 

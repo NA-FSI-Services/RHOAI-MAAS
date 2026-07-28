@@ -1,0 +1,59 @@
+# Cluster admin — all models, high token budgets (above LOB executive).
+# Owner is the htpasswd user "admin" (not system:authenticated).
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: lob-admin
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+  annotations:
+    openshift.io/display-name: "Platform admin — all models (high quota)"
+    openshift.io/description: "Cluster admin user: full model access with elevated token budgets"
+spec:
+  priority: 80
+  owner:
+    users:
+      - admin
+  tokenMetadata:
+    organizationId: org-platform
+    costCenter: CC-ADMIN-0001
+    labels:
+      team: platform-admin
+      lob: admin
+  modelRefs:
+    - name: llama-3-1-8b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 50000
+          window: 1m
+    - name: gemma-4-e4b-it
+      namespace: llm
+      tokenRateLimits:
+        - limit: 50000
+          window: 1m
+    - name: llama-31-70b-cpu
+      namespace: llm
+      tokenRateLimits:
+        - limit: 10000
+          window: 1m
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: lob-admin-access
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+spec:
+  subjects:
+    users:
+      - admin
+  modelRefs:
+    - name: llama-3-1-8b-instruct
+      namespace: llm
+    - name: gemma-4-e4b-it
+      namespace: llm
+    - name: llama-31-70b-cpu
+      namespace: llm

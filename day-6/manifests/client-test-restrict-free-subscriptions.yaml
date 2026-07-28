@@ -1,0 +1,106 @@
+# Remove catch-all system:authenticated ownership from Day-2/Day-5 free tiers
+# so retail/risk users cannot mint or call models outside their LOB subscription.
+# Admin (cluster-admin) can still operate via OpenShift tokens / elevated access.
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: llama-3-1-8b-instruct-free
+  namespace: models-as-a-service
+  annotations:
+    openshift.io/display-name: "Llama 3.1 8B Free Tier (disabled for LOB isolation)"
+spec:
+  priority: 10
+  owner:
+    groups: []
+    users: []
+  modelRefs:
+    - name: llama-3-1-8b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 500
+          window: 1m
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: gemma-4-e4b-it-free
+  namespace: models-as-a-service
+  annotations:
+    openshift.io/display-name: "Gemma 4 E4B Free Tier (disabled for LOB isolation)"
+spec:
+  priority: 20
+  owner:
+    groups: []
+    users: []
+  modelRefs:
+    - name: gemma-4-e4b-it
+      namespace: llm
+      tokenRateLimits:
+        - limit: 500
+          window: 1m
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: llama-31-70b-cpu-free
+  namespace: models-as-a-service
+  annotations:
+    openshift.io/display-name: "Workshop Llama 70B Free Tier (disabled for LOB isolation)"
+spec:
+  priority: 30
+  owner:
+    groups: []
+    users: []
+  modelRefs:
+    - name: llama-31-70b-cpu
+      namespace: llm
+      tokenRateLimits:
+        - limit: 500
+          window: 1m
+---
+# Auth policies: drop system:authenticated; LOB policies cover authorized groups.
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: llama-3-1-8b-instruct-access
+  namespace: models-as-a-service
+spec:
+  subjects:
+    groups:
+      - name: maas-lob-retail
+      - name: maas-lob-risk
+      - name: maas-lob-platform
+      - name: maas-lob-executive
+  modelRefs:
+    - name: llama-3-1-8b-instruct
+      namespace: llm
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: gemma-4-e4b-it-access
+  namespace: models-as-a-service
+spec:
+  subjects:
+    groups:
+      - name: maas-lob-risk
+      - name: maas-lob-platform
+      - name: maas-lob-executive
+  modelRefs:
+    - name: gemma-4-e4b-it
+      namespace: llm
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: llama-31-70b-cpu-access
+  namespace: models-as-a-service
+spec:
+  subjects:
+    groups:
+      - name: maas-lob-platform
+      - name: maas-lob-executive
+  modelRefs:
+    - name: llama-31-70b-cpu
+      namespace: llm

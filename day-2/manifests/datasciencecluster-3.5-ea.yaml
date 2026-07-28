@@ -1,0 +1,58 @@
+# RHOAI 3.5.0-ea.2 DataScienceCluster for MaaS
+#
+# Observed CRD (rhods-operator.3.5.0-ea.2 v2):
+#   - aigateway: managementState (+ optional batchGateway) — no nested modelsAsAService yet
+#   - kserve.modelsAsService: still the MaaS enablement switch in EA2
+# Upstream docs may show aigateway.modelsAsAService; use that when the CRD gains the field.
+# Ref: opendatahub-io/models-as-a-service docs/content/install/maas-setup.md
+apiVersion: datasciencecluster.opendatahub.io/v2
+kind: DataScienceCluster
+metadata:
+  name: default-dsc
+  labels:
+    app.kubernetes.io/name: datasciencecluster
+spec:
+  components:
+    aigateway:
+      managementState: Managed
+    aipipelines:
+      managementState: Managed
+    dashboard:
+      managementState: Managed
+    feastoperator:
+      managementState: Removed
+    kserve:
+      managementState: Managed
+      modelsAsService:
+        managementState: Managed
+      nim:
+        managementState: Managed
+      rawDeploymentServiceConfig: Headed
+    kueue:
+      defaultClusterQueueName: default
+      defaultLocalQueueName: default
+      managementState: Removed
+    # OGX replaces Llama Stack for Gen AI Studio playground (RHOAI 3.5+)
+    llamastackoperator:
+      managementState: Removed
+    mlflowoperator:
+      managementState: Removed
+    modelregistry:
+      managementState: Managed
+      registriesNamespace: rhoai-model-registries
+    ogx:
+      managementState: Managed
+    ray:
+      managementState: Removed
+    trainer:
+      managementState: Removed
+    trainingoperator:
+      managementState: Removed
+    # Required for Gen AI playground chat (BFF discovers NemoGuardrails CRDs;
+    # if TrustyAI is Removed, POST /gen-ai/api/v1/lsd/responses returns HTTP 500).
+    trustyai:
+      managementState: Managed
+      mcpGuardrailsMode: false
+    workbenches:
+      managementState: Managed
+      workbenchNamespace: rhods-notebooks

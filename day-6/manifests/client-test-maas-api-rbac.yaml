@@ -1,0 +1,65 @@
+# Allow client-test groups to mint subscription-scoped API keys via maas-api.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-lob-retail-api
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: maas-viewer-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-lob-retail
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-lob-risk-api
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: maas-viewer-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-lob-risk
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-lob-platform-api
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: maas-viewer-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-lob-platform
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-lob-executive-api
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: maas-viewer-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-lob-executive

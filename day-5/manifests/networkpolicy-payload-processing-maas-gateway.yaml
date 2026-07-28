@@ -1,0 +1,28 @@
+# RHOAI 3.5-ea ModelsAsService NetworkPolicy only allows data-science-gateway → IPP.
+# MaaS tenant traffic uses maas-default-gateway; without this policy ExtProc times out (HTTP 500).
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: payload-processing-allow-maas-gateway
+  namespace: openshift-ingress
+  labels:
+    maas.opendatahub.io/day5: litellm-external
+  annotations:
+    opendatahub.io/managed: "false"
+spec:
+  podSelector:
+    matchLabels:
+      app: payload-processing
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: openshift-ingress
+          podSelector:
+            matchLabels:
+              gateway.networking.k8s.io/gateway-name: maas-default-gateway
+      ports:
+        - port: 9004
+          protocol: TCP

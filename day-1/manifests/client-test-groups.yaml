@@ -1,0 +1,48 @@
+# Client test personas — OpenShift groups for MaaS subscription ownership.
+# Users: Adam, Brenda (retail) | Charlotte, Daniel (risk) | Emma (platform) | Francis (executive)
+---
+apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: maas-lob-retail
+  labels:
+    maas.opendatahub.io/client-test: "true"
+  annotations:
+    openshift.io/display-name: "LOB — Retail Analytics"
+users:
+  - Adam
+  - Brenda
+---
+apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: maas-lob-risk
+  labels:
+    maas.opendatahub.io/client-test: "true"
+  annotations:
+    openshift.io/display-name: "LOB — Risk Analytics"
+users:
+  - Charlotte
+  - Daniel
+---
+apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: maas-lob-platform
+  labels:
+    maas.opendatahub.io/client-test: "true"
+  annotations:
+    openshift.io/display-name: "LOB — Platform Engineering"
+users:
+  - Emma
+---
+apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: maas-lob-executive
+  labels:
+    maas.opendatahub.io/client-test: "true"
+  annotations:
+    openshift.io/display-name: "LOB — Executive / Power User"
+users:
+  - Francis

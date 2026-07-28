@@ -1,0 +1,71 @@
+# Authorize client-test groups to their subscription models only.
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: lob-retail-access
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+spec:
+  subjects:
+    groups:
+      - name: maas-lob-retail
+  modelRefs:
+    - name: llama-3-1-8b-instruct
+      namespace: llm
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: lob-risk-access
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+spec:
+  subjects:
+    groups:
+      - name: maas-lob-risk
+  modelRefs:
+    - name: llama-3-1-8b-instruct
+      namespace: llm
+    - name: gemma-4-e4b-it
+      namespace: llm
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: lob-platform-access
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+spec:
+  subjects:
+    groups:
+      - name: maas-lob-platform
+  modelRefs:
+    - name: llama-3-1-8b-instruct
+      namespace: llm
+    - name: gemma-4-e4b-it
+      namespace: llm
+    - name: llama-31-70b-cpu
+      namespace: llm
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSAuthPolicy
+metadata:
+  name: lob-executive-access
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+spec:
+  subjects:
+    groups:
+      - name: maas-lob-executive
+  modelRefs:
+    - name: llama-3-1-8b-instruct
+      namespace: llm
+    - name: gemma-4-e4b-it
+      namespace: llm
+    - name: llama-31-70b-cpu
+      namespace: llm

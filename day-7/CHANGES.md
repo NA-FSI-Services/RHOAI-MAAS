@@ -1,6 +1,6 @@
 # Day 7 Installation — Change Log and Deviations
 
-**Date:** 2026-06-05  
+**Date:** 2026-06-05 (updated 2026-07-28 for local Llama)  
 **Script:** [run-day7-install.sh](run-day7-install.sh)
 
 ---
@@ -10,18 +10,20 @@
 | Original plan | Day 7 resolution |
 |---------------|------------------|
 | MaaS demo ends at gateway + observability | Optional **OpenShift Lightspeed** consumes the same MaaS gateway |
-| External LLM for Lightspeed (OpenAI/watsonx) | **Qwen3-4B on MaaS** — “drink your own champagne” |
+| External LLM for Lightspeed (OpenAI/watsonx) | **Local Llama 3.1 8B on MaaS** — “drink your own champagne” |
 
 ---
 
-## 2. Model choice: Qwen3-4B-Instruct (not Granite tiny)
+## 2. Model choice: local Llama 3.1 8B (this cluster)
 
 | Approach | Why |
 |----------|-----|
-| **Qwen3-4B-Instruct** | Already deployed with `--enable-auto-tool-choice` + `--tool-call-parser=hermes`; strong instruct + tool-use for cluster Q&A |
-| Granite 4 tiny | Works after vLLM patch but 1B quality is weak for Lightspeed; kept for other MaaS demos only |
+| **llama-3-1-8b-instruct** | Local GPU model already Ready; patched with `--enable-auto-tool-choice` + `--tool-call-parser=llama3_json` |
+| Qwen3-4B (earlier sandboxes) | Not deployed on this cluster |
+| Granite tiny | Weak quality for Lightspeed Q&A |
 
-No new GPU node required — Qwen already runs on an existing L40S node.
+**Note:** Plain chat and `tool_choice: auto` through MaaS return **HTTP 200**. Lightspeed needs **`--max-model-len≥32k`** plus OLS `contextWindowSize`/`maxTokensForResponse` — with the default 8k context, OLS (system + RAG + 24 MCP tools + `max_completion_tokens=4096`) exceeds the window and vLLM returns **400**, which OLS surfaces as `incomplete chunked read`.
+
 
 ---
 

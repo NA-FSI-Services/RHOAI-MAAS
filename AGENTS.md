@@ -54,6 +54,7 @@ curl -sk -o /dev/null -w "basic: %{http_code}\n" -X POST "${MAAS_URL}/llm/facebo
 
 ## When unsure
 
-- Read [04-installation-and-ready-state.md](04-installation-and-ready-state.md) for install order.
+- Read [04-installation-and-ready-state.md](04-installation-and-ready-state.md) for install order (RHOAI **3.4** baseline).
+- For RHOAI **3.5 Early Access** (`beta` / `3.5.0-ea.2`), follow [08-rhoai-3.5-ea-install.md](08-rhoai-3.5-ea-install.md) and [day-2/CHANGES-3.5-ea.md](day-2/CHANGES-3.5-ea.md) — EA2 still enables MaaS via `kserve.modelsAsService` while also managing `aigateway`.
 - Read [day-N/CHANGES.md](day-6/CHANGES.md) for deviations from upstream rhoai-maas-guide.
 - Ask before deleting install logs the user may rely on locally (they are gitignored, not removed from disk).

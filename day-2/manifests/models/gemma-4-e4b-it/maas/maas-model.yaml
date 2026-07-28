@@ -1,0 +1,12 @@
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSModelRef
+metadata:
+  name: gemma-4-e4b-it
+  namespace: llm
+  annotations:
+    openshift.io/display-name: "Gemma 4 E4B Instruct"
+    openshift.io/description: "Google Gemma 4 E4B Instruct on vLLM NVIDIA GPU (L4-sized)"
+spec:
+  modelRef:
+    kind: LLMInferenceService
+    name: gemma-4-e4b-it

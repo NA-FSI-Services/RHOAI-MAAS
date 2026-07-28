@@ -1,5 +1,8 @@
-# Enhanced gateway telemetry for showback labels (subscription, org, cost center).
-# Coexists with GitOps user-group policy; maas-telemetry adds billing attribution labels.
+# Gateway telemetry for showback labels on Limitador authorized_hits.
+#
+# Nested auth.identity.subscription_info.* paths stalled Limitador counters on
+# RHOAI 3.5-ea / this Authorino build. Keep labels to flat string identity fields
+# plus responseBodyJSON("/model").
 apiVersion: extensions.kuadrant.io/v1alpha1
 kind: TelemetryPolicy
 metadata:
@@ -14,10 +17,7 @@ spec:
       labels:
         model: responseBodyJSON("/model")
         user: auth.identity.userid
-        tier: auth.identity.tier
         subscription: auth.identity.selected_subscription
-        organization_id: auth.identity.subscription_info.organizationId
-        cost_center: auth.identity.subscription_info.costCenter
   targetRef:
     group: gateway.networking.k8s.io
     kind: Gateway

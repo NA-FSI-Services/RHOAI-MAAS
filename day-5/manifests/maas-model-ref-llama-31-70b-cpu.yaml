@@ -1,0 +1,13 @@
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSModelRef
+metadata:
+  name: llama-31-70b-cpu
+  namespace: llm
+  labels:
+    maas.opendatahub.io/day5: litellm-external
+  annotations:
+    openshift.io/display-name: "Llama 3.1 70B (workshop external)"
+spec:
+  modelRef:
+    kind: ExternalModel
+    name: llama-31-70b-cpu

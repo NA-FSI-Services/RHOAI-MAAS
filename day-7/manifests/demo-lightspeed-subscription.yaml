@@ -1,4 +1,4 @@
-# Dedicated subscription for OpenShift Lightspeed → MaaS gateway (Qwen3-4B).
+# Dedicated subscription for OpenShift Lightspeed → MaaS gateway (local Llama 3.1 8B).
 apiVersion: maas.opendatahub.io/v1alpha1
 kind: MaaSSubscription
 metadata:
@@ -8,7 +8,7 @@ metadata:
     maas.opendatahub.io/day7: lightspeed-maas
   annotations:
     openshift.io/display-name: "Demo — OpenShift Lightspeed via MaaS"
-    openshift.io/description: "Lightspeed consumes governed Qwen3-4B inference through the MaaS gateway"
+    openshift.io/description: "Lightspeed consumes governed local Llama 3.1 8B inference through the MaaS gateway"
 spec:
   priority: 22
   owner:
@@ -21,7 +21,7 @@ spec:
       team: openshift-lightspeed
       demo_persona: lightspeed
   modelRefs:
-    - name: qwen3-4b-instruct
+    - name: llama-3-1-8b-instruct
       namespace: llm
       tokenRateLimits:
         - limit: 50000

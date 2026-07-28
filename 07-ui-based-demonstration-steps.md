@@ -147,12 +147,21 @@ Repeat Step 1.2 for:
 > **Prerequisite:** Complete [Step 0.1](#step-01--create-rhoai-projects-before-playground) — select your **own** project (e.g. `maas-demo-admin` as admin, `maas-demo-retail` as retail persona). Do **not** use shared read-only projects such as `grafana`.
 
 1. Confirm the correct **project** is selected in the top navigation bar.
-2. On **AI asset endpoints → Models**, locate **granite-4-tiny-gpu** (admin) or **facebook-opt-125m-simulated** (retail persona).
+2. On **AI asset endpoints → Models**, locate a Ready MaaS model (e.g. **gemma-4-e4b-it** or **llama-3-1-8b-instruct**).
 3. Click the row **Actions** menu (⋮) → **Try in playground** (or **Add to playground** → configure if first use in this project).
-4. In the playground tab:
-   - Select subscription **granite-tiny-gpu-premium** or **demo-platform-ops** if prompted
-   - Enter prompt: *“Summarize MaaS governance in one sentence.”*
-   - Send and show the streaming response
+4. **RHOAI 3.5-ea required workaround** (auto-config uses `fake` API tokens and a broken in-cluster MaaS URL). From a terminal logged in as the playground user:
+
+   ```bash
+   ./scripts/fix-genai-playground-maas.sh <your-project-namespace> lob-admin
+   # retail persona example: ./scripts/fix-genai-playground-maas.sh maas-demo-retail lob-retail
+   ```
+
+   Then hard-refresh the playground. Do **not** click **Update playground configuration** afterward.
+5. In the playground tab:
+   - Select the model and send: *“Summarize MaaS governance in one sentence.”*
+   - Show the streaming response
+
+> Details / product defects: [06-troubleshooting.md](06-troubleshooting.md#gen-ai-playground--models-unavailable-fake-api-token).
 
 Repeat briefly with the **simulator** model to contrast CPU vs GPU model.
 

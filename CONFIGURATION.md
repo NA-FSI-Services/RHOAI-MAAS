@@ -24,6 +24,35 @@ Generate keys instead of hand-editing:
 
 Then run `./day-1/setup-multi-user.sh`.
 
+## Client test personas (optional)
+
+Six htpasswd users (Adam–Francis) with LOB groups, subscriptions, and rate limits:
+
+```bash
+./day-1/setup-client-test-users.sh
+oc apply -f day-6/manifests/client-test-subscriptions.yaml
+oc apply -f day-6/manifests/client-test-auth-policies.yaml
+oc apply -f day-6/manifests/client-test-maas-api-rbac.yaml
+oc apply -f day-6/manifests/client-test-restrict-free-subscriptions.yaml
+```
+
+Shareable tester handout (passwords + cluster URLs — **gitignored**):
+
+| File | Copy from | Purpose |
+|------|-----------|---------|
+| `CLIENT-TEST-ACCESS.md` | [CLIENT-TEST-ACCESS.example.md](CLIENT-TEST-ACCESS.example.md) | Client test matrix, credentials, curl/dashboard steps |
+
+## Hugging Face token (RHOAI 3.5-ea Gemma models)
+
+Gemma 4 E4B pulls from Hugging Face (`hf://google/gemma-4-E4B-it`). If the storage-initializer fails with 401/403, create a token secret and attach it per KServe docs (local only — never commit):
+
+```bash
+# example — do not commit the secret YAML
+oc create secret generic hf-token -n llm --from-literal=HF_TOKEN="hf_..."
+```
+
+Llama 3.1 on this branch uses a Red Hat ModelCar (`oci://registry.redhat.io/...`) and does not need an HF token.
+
 ## External model provider (Day 5)
 
 | File | Copy from | Purpose |

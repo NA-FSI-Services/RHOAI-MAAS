@@ -1,5 +1,8 @@
 # OLSConfig — route OpenShift Lightspeed to the MaaS gateway (OpenAI-compatible).
 # URL is set at install time by run-day7-install.sh (inline OLSConfig apply).
+#
+# contextWindowSize / maxTokensForResponse must fit the serving --max-model-len
+# (Lightspeed ships 24 MCP tools + system prompt; 8k context overflows easily).
 apiVersion: ols.openshift.io/v1alpha1
 kind: OLSConfig
 metadata:
@@ -15,9 +18,11 @@ spec:
         credentialsSecretRef:
           name: maas-gateway-api-key
         models:
-          - name: qwen3-4b-instruct
+          - name: llama-3-1-8b-instruct
+            contextWindowSize: 32768
             parameters:
-              toolBudgetRatio: 0.5
+              toolBudgetRatio: 0.35
+              maxTokensForResponse: 1024
   ols:
     defaultProvider: maas-gateway
-    defaultModel: qwen3-4b-instruct
+    defaultModel: llama-3-1-8b-instruct

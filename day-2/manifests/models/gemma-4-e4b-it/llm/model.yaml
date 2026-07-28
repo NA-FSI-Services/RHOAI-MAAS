@@ -1,0 +1,89 @@
+# Google Gemma 4 E4B Instruct — fits single L4 (24GB); RH ModelCars for Gemma 4 26B/31B need H200-class GPUs
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: gemma-4-e4b-it
+  annotations:
+    openshift.io/display-name: "Gemma 4 E4B Instruct"
+    opendatahub.io/model-type: generative
+    security.opendatahub.io/enable-auth: "true"
+    opendatahub.io/hardware-profile-name: nvidia-l4-gpu
+    opendatahub.io/hardware-profile-namespace: redhat-ods-applications
+  labels:
+    opendatahub.io/dashboard: "true"
+    opendatahub.io/genai-asset: "true"
+spec:
+  model:
+    name: google/gemma-4-E4B-it
+    uri: hf://google/gemma-4-E4B-it
+  replicas: 1
+  router:
+    route: {}
+    gateway:
+      refs:
+        - name: maas-default-gateway
+          namespace: openshift-ingress
+  template:
+    nodeSelector:
+      nvidia.com/gpu.present: "true"
+      nvidia.com/gpu.product: NVIDIA-L4
+    tolerations:
+      - effect: NoSchedule
+        key: nvidia.com/gpu
+        operator: Exists
+    containers:
+      - name: main
+        # RHOAI 3.5.0-ea.2 relatedImage — required for gemma4 architecture support
+        image: registry.redhat.io/rhaii-early-access/vllm-cuda-rhel9@sha256:e95153e0bdce2b94d0470d4ac983d3c4b67576280afe99e97ce51700c57f3e5a
+        command:
+          - python
+          - -m
+          - vllm.entrypoints.openai.api_server
+        args:
+          - "--served-model-name={{.Name}}"
+          - --model=/mnt/models
+          - --enable-ssl-refresh
+          - --ssl-certfile=/var/run/kserve/tls/tls.crt
+          - --ssl-keyfile=/var/run/kserve/tls/tls.key
+          - --enable-force-include-usage
+          - --max-model-len=8192
+          - --gpu-memory-utilization=0.90
+        ports:
+          - containerPort: 8000
+            name: http
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+            scheme: HTTPS
+          initialDelaySeconds: 600
+          periodSeconds: 30
+          timeoutSeconds: 30
+          failureThreshold: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+            scheme: HTTPS
+          initialDelaySeconds: 600
+          periodSeconds: 15
+          timeoutSeconds: 15
+          failureThreshold: 40
+        resources:
+          requests:
+            cpu: "4"
+            memory: 16Gi
+            nvidia.com/gpu: "1"
+          limits:
+            cpu: "8"
+            memory: 32Gi
+            nvidia.com/gpu: "1"
+        volumeMounts:
+          - mountPath: /dev/shm
+            name: shm
+    volumes:
+      - name: shm
+        emptyDir:
+          medium: Memory
+          sizeLimit: 4Gi

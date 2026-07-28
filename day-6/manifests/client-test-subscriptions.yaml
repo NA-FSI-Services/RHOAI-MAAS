@@ -1,0 +1,140 @@
+# Client-test subscriptions — distinct model access, rate limits, and cost metadata.
+# Priorities must be unique cluster-wide (RHOAI 3.5 SharedPriority).
+# Catch-all *-free system:authenticated subscriptions must be restricted separately.
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: lob-retail
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+  annotations:
+    openshift.io/display-name: "Retail LOB — Llama 3.1 8B (limited)"
+    openshift.io/description: "Retail analysts: local Llama only, low token budget"
+spec:
+  priority: 40
+  owner:
+    groups:
+      - name: maas-lob-retail
+  tokenMetadata:
+    organizationId: org-retail
+    costCenter: CC-RETAIL-1001
+    labels:
+      team: retail-analytics
+      lob: retail
+  modelRefs:
+    - name: llama-3-1-8b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 100
+          window: 1m
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: lob-risk
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+  annotations:
+    openshift.io/display-name: "Risk LOB — Llama + Gemma"
+    openshift.io/description: "Risk analysts: local Llama and Gemma, medium token budget"
+spec:
+  priority: 50
+  owner:
+    groups:
+      - name: maas-lob-risk
+  tokenMetadata:
+    organizationId: org-risk
+    costCenter: CC-RISK-2001
+    labels:
+      team: risk-analytics
+      lob: risk
+  modelRefs:
+    - name: llama-3-1-8b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 400
+          window: 1m
+    - name: gemma-4-e4b-it
+      namespace: llm
+      tokenRateLimits:
+        - limit: 400
+          window: 1m
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: lob-platform
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+  annotations:
+    openshift.io/display-name: "Platform LOB — all models"
+    openshift.io/description: "Platform engineer: all local + external models, standard budget"
+spec:
+  priority: 60
+  owner:
+    groups:
+      - name: maas-lob-platform
+  tokenMetadata:
+    organizationId: org-platform
+    costCenter: CC-PLATFORM-3001
+    labels:
+      team: platform-engineering
+      lob: platform
+  modelRefs:
+    - name: llama-3-1-8b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 1000
+          window: 1m
+    - name: gemma-4-e4b-it
+      namespace: llm
+      tokenRateLimits:
+        - limit: 1000
+          window: 1m
+    - name: llama-31-70b-cpu
+      namespace: llm
+      tokenRateLimits:
+        - limit: 500
+          window: 1m
+---
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: lob-executive
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/client-test: "true"
+  annotations:
+    openshift.io/display-name: "Executive — all models (high quota)"
+    openshift.io/description: "Power user: all models with elevated token budgets"
+spec:
+  priority: 70
+  owner:
+    groups:
+      - name: maas-lob-executive
+  tokenMetadata:
+    organizationId: org-platform
+    costCenter: CC-EXEC-4001
+    labels:
+      team: executive
+      lob: executive
+  modelRefs:
+    - name: llama-3-1-8b-instruct
+      namespace: llm
+      tokenRateLimits:
+        - limit: 5000
+          window: 1m
+    - name: gemma-4-e4b-it
+      namespace: llm
+      tokenRateLimits:
+        - limit: 5000
+          window: 1m
+    - name: llama-31-70b-cpu
+      namespace: llm
+      tokenRateLimits:
+        - limit: 2000
+          window: 1m

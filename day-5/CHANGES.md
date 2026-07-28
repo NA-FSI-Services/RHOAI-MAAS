@@ -31,18 +31,31 @@ Records conflicts between the original PoC blueprint and live cluster behavior d
 
 ---
 
-## 3. Provider secret requires BBR-managed label (critical fix)
+## 3. Provider secret requires IPP/BBR-managed labels (critical fix)
 
 | Symptom | Root cause | Fix |
 |---------|------------|-----|
-| HTTP 500: `provider 'openai' credentials not found` | `apikey-injection` plugin only watches secrets labeled `inference.networking.k8s.io/bbr-managed=true` | Label the provider secret before testing |
+| HTTP 500: `provider 'openai' credentials not found` | `apikey-injection` only watches secrets labeled for IPP/BBR | Label the provider secret before testing |
 
 ```bash
 oc label secret litellm-workshop-provider-key -n llm \
-  inference.networking.k8s.io/bbr-managed=true --overwrite
+  inference.networking.k8s.io/bbr-managed=true \
+  inference.llm-d.ai/ipp-managed=true --overwrite
 ```
 
-This label is **not documented** in the RHOAI external-model procedure but is required by the payload-processing `apikey-injection` reconciler.
+These labels are **not documented** in the RHOAI external-model procedure but are required by the payload-processing `apikey-injection` reconciler.
+
+---
+
+## 3b. RHOAI 3.5-ea: IPP must reach `maas-default-gateway` (2026-07-28)
+
+| Symptom | Root cause | Fix |
+|---------|------------|-----|
+| ExtProc `gRPC_error_14` / connect timeout → HTTP 500 | Stock NetworkPolicy only allows `gateway-name=data-science-gateway` | [networkpolicy-payload-processing-maas-gateway.yaml](manifests/networkpolicy-payload-processing-maas-gateway.yaml) |
+| No credential injection; MaaS key forwarded to LiteLLM | Stock `EnvoyFilter/payload-processing` matches old Kuadrant WasmPlugin name; ExtProc never attaches | [envoyfilter-payload-processing-extproc-attach.yaml](manifests/envoyfilter-payload-processing-extproc-attach.yaml) |
+| HTTPRoute parent `default-gateway` → `route_not_found` | IPP ExternalModel reconciler defaults gateway name | `oc set env deploy/payload-processing GATEWAY_NAME=maas-default-gateway GATEWAY_NAMESPACE=openshift-ingress` |
+| Workshop key rejects `codellama-7b-instruct` | Current workshop token only allows `llama-31-70b-cpu` | Use `*-llama-31-70b-cpu.yaml` manifests |
+| RHOAI Observe panels: `invalid character 'q' looking for beginning of value` | IPP ExtProc EnvoyFilters used `targetRefs` only; filters attached to **data-science-gateway** as well. Perses PromQL POSTs `query=...` (form body), which IPP tries to parse as JSON | Switch both `payload-processing` and `payload-processing-extproc-attach` to `workloadSelector` for `gateway-name=maas-default-gateway` (OpenShift allows only one of `targetRefs` / `workloadSelector`) |
 
 ---
 

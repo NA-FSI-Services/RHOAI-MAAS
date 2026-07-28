@@ -1,8 +1,13 @@
-# RHOAI 3.4 MaaS PoC
+# RHOAI MaaS PoC
 
-Centralized Model-as-a-Service governance demonstration on Red Hat OpenShift AI 3.4 — enterprise AI gateway, subscription-based entitlements, token rate limits, observability showback, and external model routing.
+Centralized Model-as-a-Service governance demonstration on Red Hat OpenShift AI — enterprise AI gateway, subscription-based entitlements, token rate limits, observability showback, and external model routing.
 
 **Objective:** Evaluate RHOAI MaaS as an enterprise-wide "single front door" for compliance, auditing, and multi-tenant model routing.
+
+| Track | Branch / docs | RHOAI channel |
+|-------|---------------|---------------|
+| GA / 3.4 baseline | `main` + [04-installation-and-ready-state.md](04-installation-and-ready-state.md) | `stable-3.x` / `stable-3.4` |
+| **3.5 Early Access** | `rhoai-3.5-ea` + [08-rhoai-3.5-ea-install.md](08-rhoai-3.5-ea-install.md) | `beta` → `rhods-operator.3.5.0-ea.2` |
 
 ---
 
@@ -42,7 +47,8 @@ echo "MaaS gateway: ${MAAS_URL}"
 | 01 | [Engineering Blueprint](01-engineering-blueprint.md) | Architecture, feature matrix, use cases |
 | 02 | [Cluster Current State](02-cluster-current-state.md) | Assessment and gap analysis |
 | 03 | [Validation Commands](03-cluster-validation-commands.md) | Copy-paste `oc` and `curl` health checks |
-| 04 | [Installation and Ready State](04-installation-and-ready-state.md) | Multi-day install runbook |
+| 04 | [Installation and Ready State](04-installation-and-ready-state.md) | Multi-day install runbook (3.4 baseline) |
+| 08 | [RHOAI 3.5-ea Install](08-rhoai-3.5-ea-install.md) | Early Access (`beta` / 3.5.0-ea.2) MaaS path |
 | 05 | [Demonstration Steps](05-demonstration-steps.md) | Terminal presenter script |
 | 06 | [Troubleshooting](06-troubleshooting.md) | Known issues and recovery |
 | 07 | [UI-Based Demonstration Steps](07-ui-based-demonstration-steps.md) | RHOAI Console presenter script |
