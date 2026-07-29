@@ -3,9 +3,11 @@ day-1/demo-users-passwords.env
 day-3/demo-env.sh
 day-5/provider-key.env
 day-6/demo-users.env
+day-6/p5ftb-client-keys.env
 day-7/lightspeed-maas.env
 CLIENT-TEST-ACCESS.md
 CLIENT-TEST-EMAIL.md
+LAB-CLUSTERS.md
 day-1/client-test-users-setup.log
 
 # Media (local recordings)
@@ -27,4 +29,5 @@ initial-state/
 .DS_Store
 .idea/
 .vscode/
+.cursor/
 *.swp

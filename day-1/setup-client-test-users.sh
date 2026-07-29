@@ -73,6 +73,9 @@ oc apply -f "$POC_DIR/day-6/manifests/client-test-subscriptions.yaml"
 oc apply -f "$POC_DIR/day-6/manifests/client-test-auth-policies.yaml"
 oc apply -f "$POC_DIR/day-6/manifests/admin-subscription.yaml"
 oc apply -f "$POC_DIR/day-6/manifests/client-test-maas-api-rbac.yaml"
+# RHOAI project dropdown only lists namespaces with this label
+oc label namespace llm opendatahub.io/dashboard=true --overwrite 2>/dev/null || true
+oc apply -f "$POC_DIR/day-6/manifests/client-test-llm-catalog-rbac.yaml"
 oc apply -f "$POC_DIR/day-6/manifests/client-test-restrict-free-subscriptions.yaml"
 
 echo ""

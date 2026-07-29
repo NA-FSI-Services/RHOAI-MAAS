@@ -1,0 +1,139 @@
+# Allow LOB personas to open the shared `llm` namespace in RHOAI (project
+# dropdown) and see Gen AI Studio → AI asset endpoints models.
+#
+# Requirements for the UI (not just oc get):
+# 1. Namespace label opendatahub.io/dashboard=true (applied by setup / install).
+# 2. ClusterRole/view RoleBinding — OpenShift only lists projects where the user
+#    has a broad enough role; maas-viewer-role alone does NOT surface the project.
+# 3. maas-viewer-role RoleBinding — get/list/watch MaaSModelRef + ExternalModel
+#    (also aggregated into view, kept explicit for clarity).
+#
+# view does NOT grant create/delete of LLMInferenceServices.
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-lob-retail-llm-view
+  namespace: llm
+  labels:
+    maas.opendatahub.io/client-test: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-lob-retail
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-lob-risk-llm-view
+  namespace: llm
+  labels:
+    maas.opendatahub.io/client-test: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-lob-risk
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-lob-platform-llm-view
+  namespace: llm
+  labels:
+    maas.opendatahub.io/client-test: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-lob-platform
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-lob-executive-llm-view
+  namespace: llm
+  labels:
+    maas.opendatahub.io/client-test: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: view
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-lob-executive
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-lob-retail-model-catalog
+  namespace: llm
+  labels:
+    maas.opendatahub.io/client-test: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: maas-viewer-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-lob-retail
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-lob-risk-model-catalog
+  namespace: llm
+  labels:
+    maas.opendatahub.io/client-test: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: maas-viewer-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-lob-risk
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-lob-platform-model-catalog
+  namespace: llm
+  labels:
+    maas.opendatahub.io/client-test: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: maas-viewer-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-lob-platform
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-lob-executive-model-catalog
+  namespace: llm
+  labels:
+    maas.opendatahub.io/client-test: "true"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: maas-viewer-role
+subjects:
+  - apiGroup: rbac.authorization.k8s.io
+    kind: Group
+    name: maas-lob-executive
