@@ -13,6 +13,9 @@ day-1/client-test-users-setup.log
 # Media (local recordings)
 vids/
 
+# Local diagnostics (must-gather, cluster dumps — may contain certs/tokens)
+.local/
+
 # Install / validation artifacts (cluster URLs, minted keys in logs)
 **/*install.log
 day-*/0*.txt
