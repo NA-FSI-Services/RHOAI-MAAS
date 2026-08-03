@@ -8,6 +8,7 @@ Centralized Model-as-a-Service governance demonstration on Red Hat OpenShift AI 
 |-------|---------------|---------------|
 | GA / 3.4 baseline | `main` + [04-installation-and-ready-state.md](04-installation-and-ready-state.md) | `stable-3.x` / `stable-3.4` |
 | **3.5 Early Access** | `rhoai-3.5-ea` + [08-rhoai-3.5-ea-install.md](08-rhoai-3.5-ea-install.md) | `beta` → `rhods-operator.3.5.0-ea.2` |
+| **Advanced Guardrails** | `advanced-guardrails` + [09-advanced-guardrails-plan.md](09-advanced-guardrails-plan.md) | Same as 3.5-ea + scoped/provider demos |
 
 ---
 
@@ -49,6 +50,7 @@ echo "MaaS gateway: ${MAAS_URL}"
 | 03 | [Validation Commands](03-cluster-validation-commands.md) | Copy-paste `oc` and `curl` health checks |
 | 04 | [Installation and Ready State](04-installation-and-ready-state.md) | Multi-day install runbook (3.4 baseline) |
 | 08 | [RHOAI 3.5-ea Install](08-rhoai-3.5-ea-install.md) | Early Access (`beta` / 3.5.0-ea.2) MaaS path |
+| 09 | [Advanced Guardrails Plan](09-advanced-guardrails-plan.md) | Scoped policies + pluggable providers (branch track) |
 | 05 | [Demonstration Steps](05-demonstration-steps.md) | Terminal presenter script |
 | 06 | [Troubleshooting](06-troubleshooting.md) | Known issues and recovery |
 | 07 | [UI-Based Demonstration Steps](07-ui-based-demonstration-steps.md) | RHOAI Console presenter script |
@@ -88,7 +90,7 @@ flowchart LR
 1. GPU platform + MaaS operators (Day 1)
 2. PostgreSQL, models, subscriptions (Day 2)
 3. Gateway auth, API keys, rate limits (Day 3)
-4. Unified BBR routing, NeMo Guardrails (Day 4)
+4. Unified BBR routing, NeMo Guardrails (Day 4); Advanced Guardrails demos on `advanced-guardrails`
 5. External model via `ExternalModel` (Day 5)
 6. COO observability + multi-user showback (Day 6)
 7. OpenShift Lightspeed on MaaS (Day 7, optional)

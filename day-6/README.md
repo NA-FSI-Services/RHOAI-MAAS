@@ -45,6 +45,8 @@ These personas appear as separate **users** in the Observability dashboard when 
 | **Risk Analytics** | `DEMO_RISK_KEY` | `demo-risk-analytics` | Granite, external CodeLlama | **80,000 / min** Granite; **20,000 / min** external | Org: `org-risk`, CC: `CC-RISK-2001` |
 | **Platform Engineering** | `DEMO_PLATFORM_KEY` | `demo-platform-ops` | All three models | **10k / 25k / 10k** per min | Org: `org-platform`, CC: `CC-PLATFORM-3001` |
 
+> **Advanced Guardrails:** These `organizationId` / group values bind to content-policy packs (`rails-retail`, `rails-risk`, `rails-platform`) via [manifests/demo-guardrail-bindings.yaml](manifests/demo-guardrail-bindings.yaml). Run `../day-4/demo-advanced-guardrails.sh scoped` after Day 4 — see [09-advanced-guardrails-plan.md](../09-advanced-guardrails-plan.md).
+
 ### Legacy keys (still used for auth demos 2–3)
 
 | Key | Subscription | Purpose |
@@ -126,6 +128,7 @@ Dashboard JSON only (import into an existing Grafana): [dashboards/maas-token-us
 | [manifests/demo-maas-api-rbac.yaml](manifests/demo-maas-api-rbac.yaml) | RBAC for per-user key minting |
 | [manifests/demo-subscriptions.yaml](manifests/demo-subscriptions.yaml) | Subscriptions + TPM + metadata |
 | [manifests/demo-auth-policies.yaml](manifests/demo-auth-policies.yaml) | Auth policies |
+| [manifests/demo-guardrail-bindings.yaml](manifests/demo-guardrail-bindings.yaml) | Persona → guardrail pack map (advanced-guardrails) |
 | [OBSERVABILITY-TROUBLESHOOTING.md](OBSERVABILITY-TROUBLESHOOTING.md) | Service Unavailable fix + OCP console fallbacks |
 | [fix-perses-datasource-secret.sh](fix-perses-datasource-secret.sh) | Refresh Thanos auth secret for Perses |
 | [apply-grafana-dashboard.sh](apply-grafana-dashboard.sh) | Deploy Grafana + token usage dashboard |

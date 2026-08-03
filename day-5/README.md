@@ -126,4 +126,6 @@ App (MaaS API key)
 
 Do **not** commit `provider-key.env` or the LiteLLM workshop key. Users authenticate with MaaS API keys only; the provider key is platform-managed in Kubernetes.
 
+> **Advanced Guardrails:** External model routing is orthogonal to content policy. The same org/role guardrail packs (Day 4/6) apply conceptually to prompts destined for `ExternalModel` backends — see [09-advanced-guardrails-plan.md](../09-advanced-guardrails-plan.md).
+
 See [CHANGES.md](CHANGES.md) for the BBR secret label requirement and unified-path limitation.

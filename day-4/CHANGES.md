@@ -107,3 +107,15 @@ Day 2 tenant reconcile deployed post-processing BBR and `/v1/models` route to ma
 | [06-troubleshooting.md](../06-troubleshooting.md) | BBR pre-processing, URLRewrite, GitOps legacy |
 | [README.md](../README.md) | Day 4 complete |
 | [day-3/CHANGES.md](../day-3/CHANGES.md) | Cross-reference — BBR deferred to Day 4 |
+
+---
+
+## 8. Advanced Guardrails (branch track)
+
+| Original plan | This branch |
+|---------------|-------------|
+| Single NeMo ConfigMap for Demo 5 | Keep baseline + add `manifests/advanced-guardrails/` packs |
+| No org/role content policy | Conceptual bindings + `demo-advanced-guardrails.sh` |
+| NeMo only | Provider registry with live NeMo + mock Azure/AWS |
+
+See [09-advanced-guardrails-plan.md](../09-advanced-guardrails-plan.md). Multi-scope binding is **not** a shipped MaaS CR — demo harness proves the story.

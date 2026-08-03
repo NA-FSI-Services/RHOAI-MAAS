@@ -1,0 +1,41 @@
+# Day 6 persona → guardrail pack bindings (annotated ConfigMap for demo harness).
+# Aligns organizationId / groups from demo-subscriptions.yaml with advanced guardrail packs.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-guardrail-bindings
+  namespace: models-as-a-service
+  labels:
+    maas.opendatahub.io/day6: observability-demo
+    maas.opendatahub.io/advanced-guardrails: "true"
+  annotations:
+    openshift.io/display-name: "Demo — Guardrail bindings by persona"
+    openshift.io/description: "Maps Day 6 orgs/roles to Day 4 advanced guardrail packs"
+data:
+  bindings.yaml: |
+    personas:
+      retail:
+        keyEnv: DEMO_RETAIL_KEY
+        user: demo-retail-analyst
+        group: maas-demo-retail-analyst
+        organizationId: org-retail
+        costCenter: CC-RETAIL-1001
+        configRef: rails-retail
+        providerRef: nemo-default
+      risk:
+        keyEnv: DEMO_RISK_KEY
+        user: demo-risk-analyst
+        group: maas-demo-risk-analytics
+        organizationId: org-risk
+        costCenter: CC-RISK-2001
+        configRef: rails-risk
+        providerRef: nemo-default
+      platform:
+        keyEnv: DEMO_PLATFORM_KEY
+        user: demo-platform-ops
+        group: maas-demo-platform-ops
+        organizationId: org-platform
+        costCenter: CC-PLATFORM-3001
+        configRef: rails-platform
+        providerRef: nemo-default

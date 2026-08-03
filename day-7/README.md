@@ -70,3 +70,6 @@ Talking point: answers come from **local Llama via MaaS** — same gateway auth 
 | [manifests/demo-lightspeed-subscription.yaml](manifests/demo-lightspeed-subscription.yaml) | MaaS subscription |
 | [manifests/demo-lightspeed-auth-policy.yaml](manifests/demo-lightspeed-auth-policy.yaml) | Auth policy |
 | [manifests/olsconfig-maas-gateway.yaml](manifests/olsconfig-maas-gateway.yaml) | OLSConfig template |
+
+> **Advanced Guardrails:** Day 7 is unchanged. Lightspeed prompts are not wired through NeMo in this PoC; content-policy demos stay on Day 4/5 presenter scripts — [09-advanced-guardrails-plan.md](../09-advanced-guardrails-plan.md).
+

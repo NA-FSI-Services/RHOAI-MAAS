@@ -1,0 +1,110 @@
+# Advanced Guardrails — policy packs (ConfigMaps), bindings, and provider registry.
+# Applied by day-4/run-day4-install.sh after baseline nemo-poc-guardrails.
+# See 09-advanced-guardrails-plan.md for architecture and demo intent.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rails-retail
+  namespace: redhat-ods-applications
+  labels:
+    app.kubernetes.io/part-of: rhoai-poc
+    maas.opendatahub.io/advanced-guardrails: "true"
+    maas.opendatahub.io/guardrail-pack: retail
+  annotations:
+    openshift.io/display-name: "Guardrail pack — Retail LOB"
+    openshift.io/description: "Strict PII and secrets detection for org-retail"
+data:
+  config.yaml: |
+    rails:
+      config:
+        sensitive_data_detection:
+          input:
+            entities:
+              - EMAIL_ADDRESS
+              - PERSON
+              - PHONE_NUMBER
+              - CREDIT_CARD
+              - US_SSN
+        regex_detection:
+          input:
+            patterns:
+              - "\\b(password|secret|api[_-]?key|token)\\b"
+              - "\\b(credit\\s*card|ssn|social\\s*security)\\b"
+            case_insensitive: true
+      input:
+        flows:
+          - detect sensitive data on input
+          - regex check input
+  rails.co: |
+    # Retail pack — block secrets and PII (PoC)
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rails-risk
+  namespace: redhat-ods-applications
+  labels:
+    app.kubernetes.io/part-of: rhoai-poc
+    maas.opendatahub.io/advanced-guardrails: "true"
+    maas.opendatahub.io/guardrail-pack: risk
+  annotations:
+    openshift.io/display-name: "Guardrail pack — Risk Analytics"
+    openshift.io/description: "Jailbreak + SSN focus; ops allowlisted secret keywords"
+data:
+  config.yaml: |
+    rails:
+      config:
+        sensitive_data_detection:
+          input:
+            entities:
+              - US_SSN
+              - CREDIT_CARD
+        regex_detection:
+          input:
+            patterns:
+              # Ops allowlist: do NOT block bare "password" (retail does)
+              - "\\b(ignore\\s+previous\\s+instructions|jailbreak|dan\\s+mode)\\b"
+              - "\\b(ssn|social\\s*security)\\b"
+            case_insensitive: true
+      input:
+        flows:
+          - detect sensitive data on input
+          - regex check input
+  rails.co: |
+    # Risk pack — jailbreak + SSN; password allowed for ops prompts (PoC)
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rails-platform
+  namespace: redhat-ods-applications
+  labels:
+    app.kubernetes.io/part-of: rhoai-poc
+    maas.opendatahub.io/advanced-guardrails: "true"
+    maas.opendatahub.io/guardrail-pack: platform
+  annotations:
+    openshift.io/display-name: "Guardrail pack — Platform Engineering"
+    openshift.io/description: "Baseline rails with diagnostic phrasing allowed"
+data:
+  config.yaml: |
+    rails:
+      config:
+        sensitive_data_detection:
+          input:
+            entities:
+              - EMAIL_ADDRESS
+              - US_SSN
+        regex_detection:
+          input:
+            patterns:
+              # Block raw secrets, allow "password reset" style diagnostics via harness
+              - "\\b(api[_-]?key|sk-oai-|Bearer\\s+[A-Za-z0-9._-]{20,})\\b"
+              - "\\b(credit\\s*card|ssn|social\\s*security)\\b"
+            case_insensitive: true
+      input:
+        flows:
+          - detect sensitive data on input
+          - regex check input
+  rails.co: |
+    # Platform pack — baseline; diagnostics via demo harness allowlist (PoC)

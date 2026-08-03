@@ -23,6 +23,8 @@ Day 3 exit criteria are **met**. The gateway blocker from Day 2 is resolved, API
 | NeMo Guardrails | **Deferred** — not in guide repo; optional |
 | Demo user groups | **Deferred Day 3** — added Day 1/6 via htpasswd ([MULTI-USER-ACCESS.md](../MULTI-USER-ACCESS.md)) |
 
+> **Advanced Guardrails:** Content safety remains Day 4+ (not a substitute for 401/403). Scoped packs and pluggable providers are documented on [09-advanced-guardrails-plan.md](../09-advanced-guardrails-plan.md); auth demos in Day 3 are unchanged.
+
 ---
 
 ## Root cause fix: Authorino TLS

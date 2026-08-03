@@ -100,3 +100,9 @@ Documented in [OBSERVABILITY-TROUBLESHOOTING.md](OBSERVABILITY-TROUBLESHOOTING.m
 | [04-installation-and-ready-state.md](../04-installation-and-ready-state.md) | Day 6 section |
 | [02-cluster-current-state.md](../02-cluster-current-state.md) | COO + personas |
 | [scripts/seed-demo-traffic.sh](../scripts/seed-demo-traffic.sh) | Legacy seed (Day 3 keys); prefer `daily-traffic.sh` |
+
+---
+
+## 8. Advanced Guardrails bindings
+
+`run-day6-install.sh` applies [manifests/demo-guardrail-bindings.yaml](manifests/demo-guardrail-bindings.yaml) when present (maps persona orgs/groups to Day 4 policy packs). See [09-advanced-guardrails-plan.md](../09-advanced-guardrails-plan.md).

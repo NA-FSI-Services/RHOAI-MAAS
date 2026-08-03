@@ -1,0 +1,43 @@
+# Pluggable guardrail provider registry (PoC).
+# Live checks: nemo → Day 4 NemoGuardrails route.
+# azure / aws → mock responses unless endpoints set in local env (never commit secrets).
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: guardrail-provider-registry
+  namespace: redhat-ods-applications
+  labels:
+    app.kubernetes.io/part-of: rhoai-poc
+    maas.opendatahub.io/advanced-guardrails: "true"
+  annotations:
+    openshift.io/display-name: "Guardrail provider registry (PoC)"
+    maas.opendatahub.io/rfe-shape: "GuardrailProvider"
+data:
+  providers.yaml: |
+    default: nemo
+    providers:
+      nemo:
+        type: nemo
+        displayName: NVIDIA NeMo Guardrails (RHOAI TrustyAI)
+        endpointEnv: GUARDRAILS_URL
+        path: /v1/guardrail/checks
+        mode: live
+      azure:
+        type: azure-content-safety
+        displayName: Azure AI Content Safety
+        mode: mock
+        # Real: set AZURE_CONTENT_SAFETY_ENDPOINT + AZURE_CONTENT_SAFETY_KEY locally
+      aws:
+        type: bedrock-guardrails
+        displayName: AWS Bedrock Guardrails
+        mode: mock
+        # Real: set AWS_GUARDRAIL_ID + region credentials locally
+      # Optional enterprise intercept (PANW-style) — mock only on this branch
+      airs:
+        type: ai-runtime-security
+        displayName: AI Runtime Security API Intercept (example)
+        mode: mock
+  interface.txt: |
+    GuardrailProvider.check(messages, policy) -> { status, provider, reasons[] }
+    Defense-in-depth: NeMo local rails first, optional enterprise provider second.

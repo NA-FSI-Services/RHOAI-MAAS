@@ -29,6 +29,8 @@ Day 1 exit criteria are **met** after remediation of a duplicate RHOAI OperatorG
 4. **Remediation** — Removed duplicate `OperatorGroup/redhat-ods-operator` created by initial full operator apply
 5. **Multi-user (optional)** — htpasswd IdP + persona groups via [setup-multi-user.sh](setup-multi-user.sh) — see [MULTI-USER-ACCESS.md](../MULTI-USER-ACCESS.md)
 
+> **Advanced Guardrails:** Persona groups created here (`maas-demo-retail-analyst`, `maas-demo-risk-analytics`, `maas-demo-platform-ops`) are the **role/org identity** used by scoped guardrail demos on branch `advanced-guardrails` — see [09-advanced-guardrails-plan.md](../09-advanced-guardrails-plan.md).
+
 ---
 
 ## File index

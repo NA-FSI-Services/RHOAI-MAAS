@@ -92,7 +92,22 @@ Expected: safe → `"status":"success"`; blocked → `"status":"blocked"`.
 | [06-day4-final-state.txt](06-day4-final-state.txt) | Cluster snapshot |
 | [manifests/bbr/](manifests/bbr/) | BBR EnvoyFilter, HTTPRoutes, pre-processing |
 | [manifests/nemo-guardrails/](manifests/nemo-guardrails/) | ConfigMap + NemoGuardrails CR |
+| [manifests/advanced-guardrails/](manifests/advanced-guardrails/) | Scoped packs, bindings, provider registry (PoC) |
+| [demo-advanced-guardrails.sh](demo-advanced-guardrails.sh) | Demo A (scoped) + Demo B (providers) harness |
 | [manifests/legacy-maas-api-cleanup.yaml](manifests/legacy-maas-api-cleanup.yaml) | Deprecation marker ConfigMap |
+
+---
+
+## Advanced Guardrails (branch `advanced-guardrails`)
+
+After baseline NeMo is Ready, Day 4 also applies scoped **policy packs** and a **provider registry**. Plan: [09-advanced-guardrails-plan.md](../09-advanced-guardrails-plan.md).
+
+```bash
+./demo-advanced-guardrails.sh baseline   # Day 4 safe / blocked
+source ../day-6/demo-users.env           # after Day 6
+./demo-advanced-guardrails.sh scoped     # org/role packs
+./demo-advanced-guardrails.sh providers  # nemo | azure | aws
+```
 
 ---
 
@@ -103,6 +118,7 @@ The sandbox now supports:
 - Full MaaS governance (Days 1–3)
 - Unified `/v1/chat/completions` body-based routing (Day 4)
 - NeMo Guardrails content checks (Day 4, Technology Preview)
+- Advanced guardrails PoC — scoped packs + pluggable providers (see plan)
 - Canonical operator-managed `maas-api` only (legacy scaled down)
 
 See [CHANGES.md](CHANGES.md) for auth gap on unified path and GitOps legacy restore notes.

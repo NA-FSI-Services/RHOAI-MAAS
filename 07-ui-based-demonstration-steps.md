@@ -42,7 +42,8 @@ export CLUSTER_DOMAIN=$(oc get ingresses.config/cluster -o jsonpath='{.spec.doma
 - [ ] `./day-6/daily-traffic.sh` run at least once (or `--quick` on demo morning)
 - [ ] htpasswd IdP **`maas-demo-users`** available on OpenShift login page — see [MULTI-USER-ACCESS.md](MULTI-USER-ACCESS.md)
 - [ ] Each persona has a **dedicated RHOAI project** for playground (e.g. `maas-demo-retail`) — see [Step 0.1](#step-01--create-rhoai-projects-before-playground)
-- [ ] Terminal prepared **only** for Demo 2 (401/403/429) and Demo 5 fallbacks — keep minimized until needed
+- [ ] Terminal prepared **only** for Demo 2 (401/403/429) and Demo 5 / Advanced A/B fallbacks — keep minimized until needed
+- [ ] (Advanced) Day 4 advanced ConfigMaps present; `./day-4/demo-advanced-guardrails.sh help` works
 
 ### Screenshot folder
 
@@ -333,26 +334,30 @@ EPP scheduler decisions and KV-cache routing are not visualized in RHOAI 3.4. Us
 
 ---
 
-## Demo 5: NeMo Guardrails Content Safety
+## Demo 5: NeMo Guardrails Content Safety (+ Advanced)
 
-**Duration:** 5 minutes  
-**Objective:** Show content safety blocking forbidden input before LLM inference.
+**Duration:** 5 minutes baseline; **+8–10 minutes** for Advanced A/B  
+**Objective:** Show content safety blocking forbidden input; then scoped packs and pluggable providers.
 
-### Cannot demonstrate in RHOAI UI (this PoC)
+### Cannot demonstrate fully in RHOAI UI (this PoC)
 
-NeMo Guardrails is deployed as `nemo-poc-guardrails` in `redhat-ods-applications` but is **not integrated into the RHOAI Gen AI Studio playground** for this PoC. There is no Guardrails tab to click in the client demo.
+NeMo Guardrails is deployed as `nemo-poc-guardrails` in `redhat-ods-applications` but is **not integrated into the RHOAI Gen AI Studio playground** for this PoC. There is no Guardrails tab to click in the client demo. Advanced bindings are ConfigMaps + harness — see [09-advanced-guardrails-plan.md](09-advanced-guardrails-plan.md).
 
 ### UI-adjacent option (OpenShift Console)
 
 1. OpenShift Console → **Operators** → **Installed Operators** → namespace **`redhat-ods-applications`**.
-2. Locate **Nemo Guardrails** operator / **`NemoGuardrails`** instance **`nemo-poc-guardrails`** → **Ready**.
+2. Locate **Nemo Guardrails** / **`NemoGuardrails`** instance **`nemo-poc-guardrails`** → **Ready**.
+3. **Workloads → ConfigMaps** — filter label `maas.opendatahub.io/advanced-guardrails=true` — show `rails-retail`, `rails-risk`, `rails-platform`, `guardrail-provider-registry`.
 
 > **Screenshot:** NemoGuardrails CR status Ready.  
 > ![OpenShift — NemoGuardrails Ready](screenshots/07-ui/14-nemo-guardrails-cr.png)
 
-### Terminal fallback (live proof)
+> **Screenshot:** Advanced guardrail ConfigMaps (packs + registry).  
+> ![OpenShift — advanced guardrail ConfigMaps](screenshots/07-ui/14b-advanced-guardrail-configmaps.png)
 
-Run safe vs blocked checks from [05 Demo 5](05-demonstration-steps.md#demo-5-nemo-guardrails-content-safety):
+### Terminal fallback — baseline (live proof)
+
+Run safe vs blocked checks from [05 Demo 5](05-demonstration-steps.md#demo-5-nemo-guardrails-content-safety--advanced):
 
 ```bash
 export GUARDRAILS_URL="https://$(oc get route nemo-poc-guardrails -n redhat-ods-applications -o jsonpath='{.spec.host}')"
@@ -363,6 +368,31 @@ export GUARDRAILS_URL="https://$(oc get route nemo-poc-guardrails -n redhat-ods-
 
 > **Screenshot:** Terminal JSON showing blocked status.  
 > ![Terminal — guardrails blocked response](screenshots/07-ui/15-guardrails-blocked-json.png)
+
+### Demo 5A — Scoped policies (terminal, ≈5 min)
+
+**UI setup:** Show Day 6 subscriptions in RHOAI (**Settings → Subscriptions**) with `org-retail` / `org-risk` / `org-platform` metadata, then switch to terminal:
+
+```bash
+source day-6/demo-users.env
+./day-4/demo-advanced-guardrails.sh scoped
+```
+
+**Talking point:** “Same password prompt — retail blocked, risk allowed (ops pack). Auth and content policy attach at the same identity dimensions.”
+
+> **Screenshot:** Harness output retail blocked / risk success.  
+> ![Terminal — scoped guardrails](screenshots/07-ui/15b-scoped-guardrails.png)
+
+### Demo 5B — Pluggable providers (terminal, ≈5 min)
+
+```bash
+./day-4/demo-advanced-guardrails.sh providers
+```
+
+**Talking point:** “NeMo is live; Azure and AWS are mock-shaped responses on this branch — same `status` contract, different `provider` / `reasons`. Swap backends without changing the app check API.”
+
+> **Screenshot:** nemo / azure / aws blocked results.  
+> ![Terminal — provider plugins](screenshots/07-ui/15c-provider-plugins.png)
 
 ---
 
@@ -502,7 +532,7 @@ If Lightspeed UI is unavailable, use terminal fallback in [05 — OLS](05-demons
 | 2 | AuthN / AuthZ / multi-user | **Mostly UI** | 12–15 min | **Yes** (401/403) |
 | 3 | Token rate limits | **Partial UI** | 5–7 min | **Yes** (429) |
 | 4 | EPP replicas | OpenShift UI only | 5 min | Optional |
-| 5 | NeMo Guardrails | OpenShift status only | 5 min | **Yes** (live block) |
+| 5 | NeMo Guardrails (+ Advanced A/B) | OpenShift + terminal | 5–15 min | **Yes** (live block + harness) |
 | 6 | Observability showback | **Full UI** | 10–12 min | Pre-demo traffic only |
 | 7 | External model | **Full UI** | 5–7 min | Optional |
 | OLS | Lightspeed on MaaS | OpenShift UI | 3–5 min | Fallback if UI down |
@@ -514,7 +544,7 @@ If Lightspeed UI is unavailable, use terminal fallback in [05 — OLS](05-demons
 | Slide | UI demo coverage |
 |-------|------------------|
 | Slide 3 — Architecture | Demo 1 (catalog + endpoints), Demo 7 (external in same catalog) |
-| Slide 4 — Deterministic proofs | Demo 2 Part C terminal (401/403); Demo 5 terminal (blocked) |
+| Slide 4 — Deterministic proofs | Demo 2 Part C terminal (401/403); Demo 5 terminal (blocked + **5A/5B**) |
 | Slide 5 — Fleet economics | Demo 4 (OpenShift pod placement) |
 | Slide 6 — Observability | Demo 6 (dashboard + CSV) — **strongest UI story** |
 
@@ -533,6 +563,7 @@ If Lightspeed UI is unavailable, use terminal fallback in [05 — OLS](05-demons
 | 401 / 403 proofs | No | No | **curl -i** |
 | 429 rate limit proof | Unreliable | No | **curl -i** |
 | NeMo Guardrails live block | No | CR status only | **curl** |
+| Scoped / provider guardrails | No | ConfigMaps | **demo-advanced-guardrails.sh** |
 | MaaS usage dashboard | Yes | Metrics fallback | PromQL |
 | External model metrics | Yes (Demo 6 filter) | — | PromQL |
 | EPP / GPU placement | No | Yes (pods) | oc get pods |

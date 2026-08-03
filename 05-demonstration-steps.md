@@ -46,6 +46,7 @@ source day-6/demo-users.env
 - Granite and simulator pods Running in `llm` namespace
 - `payload-pre-processing` Running in `openshift-ingress`
 - NeMo Guardrails Ready (`nemo-poc-guardrails` in `redhat-ods-applications`)
+- (Advanced) ConfigMaps labeled `maas.opendatahub.io/advanced-guardrails=true` — after Day 4 re-install on this branch
 - `demo-users.env` loaded (`source day-6/demo-users.env`) — persona keys minted per-user, not admin
 - htpasswd IdP active (`oc get oauth cluster -o jsonpath='{.spec.identityProviders[*].name}'` includes `maas-demo-users`)
 - Persona groups exist (`oc get group maas-demo-retail-analyst maas-demo-risk-analytics maas-demo-platform-ops`)
@@ -426,18 +427,20 @@ done
 
 ---
 
-## Demo 5: NeMo Guardrails Content Safety
+## Demo 5: NeMo Guardrails Content Safety (+ Advanced)
 
-**Duration:** 5 minutes  
-**Objective:** Safety layer blocks forbidden input before it reaches the LLM.
+**Duration:** 5 minutes baseline; **+8–10 minutes** for Advanced A/B  
+**Objective:** Safety layer blocks forbidden input before it reaches the LLM; advanced track shows **scoped packs** and **pluggable providers**.
 
-> **Deployed Day 4:** `nemo-poc-guardrails` in `redhat-ods-applications`. Uses CPU internal detectors (Presidio + regex). Technology Preview.
+> **Deployed Day 4:** `nemo-poc-guardrails` in `redhat-ods-applications`. Uses CPU internal detectors (Presidio + regex). Technology Preview.  
+> **Advanced track:** [09-advanced-guardrails-plan.md](09-advanced-guardrails-plan.md) — policy packs + `day-4/demo-advanced-guardrails.sh` (requires Day 6 persona env for scoped story).
 
 ### Step 5.1 — Confirm guardrails route
 
 ```bash
 echo "Guardrails: ${GUARDRAILS_URL}"
 oc get nemoguardrails nemo-poc-guardrails -n redhat-ods-applications
+oc get configmap -n redhat-ods-applications -l maas.opendatahub.io/advanced-guardrails=true
 ```
 
 ### Step 5.2 — Safe prompt
@@ -467,6 +470,50 @@ curl -sk -X POST "${GUARDRAILS_URL}/v1/guardrail/checks" \
 ```
 
 **Expected:** `"status": "blocked"` — regex rail matches "password".
+
+---
+
+### Demo 5A — Scoped policies (user / client / role / org) ≈5 min
+
+**Objective:** Same prompt, different outcomes by **organization / role** pack — independent of model entitlement.
+
+**Talking points**
+
+- Subscriptions decide *which models*; guardrail bindings decide *which content policy*
+- Packs: `rails-retail` (strict secrets/PII), `rails-risk` (jailbreak + SSN; password allowlisted for ops), `rails-platform` (diagnostics)
+- Bindings are PoC ConfigMaps today — target CR shape in the plan doc
+
+```bash
+source day-6/demo-users.env
+./day-4/demo-advanced-guardrails.sh scoped
+```
+
+| Persona / scope | Pack | Prompt | Expected |
+|-----------------|------|--------|----------|
+| Retail / `org-retail` | `rails-retail` | `My password is secret123` | **blocked** (live NeMo) |
+| Risk / `org-risk` | `rails-risk` | Same password prompt | **success** (ops allowlist) |
+| Platform / role | `rails-platform` | `How do I run a password reset…` | **success** |
+| Risk | `rails-risk` | Jailbreak phrasing | **blocked** |
+
+**Optional client override talking point:** `clientId: mobile-banking` at higher priority than org default — shown in `guardrail-policy-bindings` ConfigMap.
+
+---
+
+### Demo 5B — Pluggable providers ≈5 min
+
+**Objective:** One check contract; swap backends (NeMo live; Azure / AWS mocked unless configured).
+
+**Talking points**
+
+- Defense-in-depth: local NeMo rails + optional enterprise provider ([PANW + NeMo pattern](https://www.paloaltonetworks.com/blog/network-security/securing-genai-with-ai-runtime-security-and-nvidia-nemo-guardrails/))
+- Registry: ConfigMap `guardrail-provider-registry` in `redhat-ods-applications`
+- Never commit Azure/AWS keys — mocks are default on this branch
+
+```bash
+./day-4/demo-advanced-guardrails.sh providers
+```
+
+**Expected:** Same password prompt → `provider: nemo|azure|aws` with `status: blocked` and **different** `reasons` shapes.
 
 ---
 
@@ -731,7 +778,7 @@ If `tool_choice auto` returns **400**, verify Qwen vLLM tool-calling flags and M
 | 2    | AuthN / AuthZ / RBAC (+ multi-user) | 10–12 min | Yes              |
 | 3    | Token rate limiting                 | 5 min     | Yes              |
 | 4    | EPP load balancing                  | 5 min     | Optional         |
-| 5    | NeMo Guardrails                     | 5 min     | Yes (Day 4)      |
+| 5    | NeMo Guardrails (+ Advanced A/B)    | 5–15 min  | Yes (Day 4; A/B needs Day 6) |
 | 6    | Observability showback              | 8–10 min  | Yes (Day 6)      |
 | 7    | External LiteLLM model              | 5 min     | Yes (Day 5)      |
 | OLS  | Lightspeed on MaaS (“champagne”)    | 3–5 min   | Optional (Day 7) |
@@ -745,7 +792,7 @@ If `tool_choice auto` returns **400**, verify Qwen vLLM tool-calling flags and M
 | Slide                          | Demo coverage                                                                    |
 | ------------------------------ | -------------------------------------------------------------------------------- |
 | Slide 3 — Architecture         | Demo 1 (gateway flow), Demo 7 (external routing)                                 |
-| Slide 4 — Deterministic proofs | Demo 2 (401/403, **2E multi-user entitlements**), Demo 3 (429), Demo 5 (blocked) |
+| Slide 4 — Deterministic proofs | Demo 2 (401/403, **2E multi-user entitlements**), Demo 3 (429), Demo 5 (blocked + **5A/5B**) |
 | Slide 5 — Fleet economics      | Demo 4 (EPP replicas)                                                            |
 | Slide 6 — Observability        | Demo 6 (three htpasswd users, per-user TPM, cost center CSV)                     |
 
@@ -755,6 +802,7 @@ If `tool_choice auto` returns **400**, verify Qwen vLLM tool-calling flags and M
 ## Related Documents
 
 - [04-installation-and-ready-state.md](04-installation-and-ready-state.md) — prerequisites
+- [09-advanced-guardrails-plan.md](09-advanced-guardrails-plan.md) — scoped packs + pluggable providers
 - [MULTI-USER-ACCESS.md](MULTI-USER-ACCESS.md) — htpasswd IdP, groups, per-user API keys
 - [07-ui-based-demonstration-steps.md](07-ui-based-demonstration-steps.md) — RHOAI UI presenter script (client demos)
 - [06-troubleshooting.md](06-troubleshooting.md) — live demo recovery

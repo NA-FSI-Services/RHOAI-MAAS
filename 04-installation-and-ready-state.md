@@ -420,7 +420,8 @@ cd PoC/day-4
 2. **EnvoyFilter** — two-stage INSERT_BEFORE + INSERT_AFTER (tenant had post-only)
 3. **HTTPRoutes** — `bbr-granite-4-tiny-gpu`, `bbr-facebook-opt-125m-simulated` in `llm` ns
 4. **NeMo Guardrails** — `nemo-poc-config` + `nemo-poc-guardrails` in `redhat-ods-applications`
-5. **Legacy cleanup** — scale `maas-api` in `maas-api` ns to 0; delete duplicate route
+5. **Advanced Guardrails (optional track)** — scoped policy packs, bindings, provider registry — [09-advanced-guardrails-plan.md](09-advanced-guardrails-plan.md)
+6. **Legacy cleanup** — scale `maas-api` in `maas-api` ns to 0; delete duplicate route
 
 ### Day 4 Exit Criteria
 
@@ -428,7 +429,7 @@ cd PoC/day-4
 - [x] NeMo Guardrails Ready; blocked content returns `"status":"blocked"`
 - [x] Legacy maas-api scaled to 0
 - [ ] Auth 401 on unified path without key — use model paths for auth demo (see [day-4/CHANGES.md](day-4/CHANGES.md))
-
+- [ ] Advanced Guardrails Demo A/B — after Day 6 persona keys: `./day-4/demo-advanced-guardrails.sh scoped|providers`
 ---
 
 ## Day 5: External LiteLLM Model Integration

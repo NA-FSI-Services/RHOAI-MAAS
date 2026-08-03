@@ -72,6 +72,10 @@ oc apply -f "$DAY6_DIR/manifests/demo-auth-policies.yaml"
 oc apply -f "$DAY6_DIR/manifests/demo-restrict-default-granite.yaml"
 oc delete maassubscription granite-tiny-gpu-free -n models-as-a-service --ignore-not-found
 oc apply -f "$DAY6_DIR/manifests/demo-maas-api-rbac.yaml"
+if [ -f "$DAY6_DIR/manifests/demo-guardrail-bindings.yaml" ]; then
+  oc apply -f "$DAY6_DIR/manifests/demo-guardrail-bindings.yaml"
+  echo "Demo guardrail bindings applied (advanced-guardrails track)"
+fi
 sleep 10
 
 echo ""

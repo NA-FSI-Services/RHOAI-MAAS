@@ -74,6 +74,18 @@ for i in $(seq 1 30); do
   sleep 10
 done
 
+# --- Step 4b: Advanced Guardrails (scoped packs + provider registry) ---
+echo ""
+echo "=== Step 4b: Advanced Guardrails (PoC packs / bindings / providers) ==="
+if [ -d "$DAY4_DIR/manifests/advanced-guardrails" ]; then
+  oc apply -f "$DAY4_DIR/manifests/advanced-guardrails/policy-packs.yaml"
+  oc apply -f "$DAY4_DIR/manifests/advanced-guardrails/policy-bindings.yaml"
+  oc apply -f "$DAY4_DIR/manifests/advanced-guardrails/provider-registry.yaml"
+  echo "Advanced guardrail ConfigMaps applied. Demo: $DAY4_DIR/demo-advanced-guardrails.sh"
+else
+  echo "No advanced-guardrails manifests — skipping"
+fi
+
 # --- Step 5: Validation ---
 echo ""
 echo "=== Step 5: Validation ==="
@@ -120,6 +132,10 @@ MAAS_URL="${MAAS_URL:-https://maas.${CLUSTER_DOMAIN}}"
       -H "Content-Type: application/json" \
       -d '{"model":"test","messages":[{"role":"user","content":"My password is hunter2"}]}'
   fi
+  echo ""
+  echo "--- Advanced Guardrails ConfigMaps ---"
+  oc get configmap -n redhat-ods-applications -l maas.opendatahub.io/advanced-guardrails=true \
+    -o custom-columns=NAME:.metadata.name,PACK:.metadata.labels.maas\\.opendatahub\\.io/guardrail-pack 2>&1 || true
 } | tee "$DAY4_DIR/05-validation.txt"
 
 run_capture "06-day4-final-state.txt" sh -c '

@@ -177,6 +177,8 @@ oc apply -k day-2/manifests/models/gemma-4-e4b-it/
 - Authorino namespace may be `kuadrant-system` or `rh-connectivity-link` depending on RHCL version; set `AUTHORINO_NAMESPACE` accordingly when using upstream TLS scripts.
 - Do not grant retail personas Granite via `system:authenticated` catch-alls — see Day 6 lockdown patterns if you re-add Granite later.
 
+**Advanced Guardrails track:** branch `advanced-guardrails` (forked from this EA baseline) adds scoped policy packs and pluggable provider demos — [09-advanced-guardrails-plan.md](09-advanced-guardrails-plan.md). Re-run Day 4/6 install scripts on that branch to apply ConfigMaps.
+
 ---
 
 ## Validation quick checks

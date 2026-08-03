@@ -15,6 +15,7 @@ Guidance for AI coding agents (Cursor, Copilot, etc.) working in this repository
 - **Demo auth paths:** Use model-specific URLs (`/llm/<model>/v1/chat/completions`) for 401/403 demos; unified BBR behavior differs by cluster config.
 - **Persona isolation:** Do not grant RBAC on shared namespaces (e.g. `grafana`) for playground access. Personas create their own RHOAI projects — see [07-ui-based-demonstration-steps.md](07-ui-based-demonstration-steps.md#step-01--create-rhoai-projects-before-playground).
 - **Day 6 Granite lockdown:** Retail personas must not get Granite via `system:authenticated` subscriptions or catch-all auth policies. Use [day-6/manifests/demo-restrict-default-granite.yaml](day-6/manifests/demo-restrict-default-granite.yaml).
+- **Advanced Guardrails:** Scoped packs and provider plugins live on branch `advanced-guardrails` — plan [09-advanced-guardrails-plan.md](09-advanced-guardrails-plan.md); do not claim multi-scope binding is a shipped MaaS CR.
 
 ## Scripts and manifests
 

@@ -1,0 +1,56 @@
+# Conceptual GuardrailPolicyBinding documents (annotated ConfigMaps).
+# Not a MaaS CRD — target shape for product discussion; consumed by demo harness.
+# Live org/role bindings for Day 6 personas: day-6/manifests/demo-guardrail-bindings.yaml
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: guardrail-policy-bindings
+  namespace: redhat-ods-applications
+  labels:
+    app.kubernetes.io/part-of: rhoai-poc
+    maas.opendatahub.io/advanced-guardrails: "true"
+  annotations:
+    openshift.io/display-name: "Guardrail policy bindings (PoC)"
+    maas.opendatahub.io/rfe-shape: "GuardrailPolicyBinding"
+data:
+  bindings.yaml: |
+    # Target shape (RFE) — not enforced by MaaS controllers today
+    apiVersion: maas.opendatahub.io/v1alpha1
+    kind: GuardrailPolicyBindingList
+    items:
+      - metadata:
+          name: org-retail-rails
+        spec:
+          target:
+            organizationId: org-retail
+          providerRef: nemo-default
+          configRef: rails-retail
+          priority: 100
+      - metadata:
+          name: org-risk-rails
+        spec:
+          target:
+            organizationId: org-risk
+          providerRef: nemo-default
+          configRef: rails-risk
+          priority: 100
+      - metadata:
+          name: role-platform-rails
+        spec:
+          target:
+            groups:
+              - maas-demo-platform-ops
+          providerRef: nemo-default
+          configRef: rails-platform
+          priority: 110
+      - metadata:
+          name: client-mobile-banking-override
+        spec:
+          target:
+            clientId: mobile-banking
+            organizationId: org-retail
+          providerRef: nemo-default
+          configRef: rails-retail
+          priority: 200
+          notes: "Client override wins over org default when both match"

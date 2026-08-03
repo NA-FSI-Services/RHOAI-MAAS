@@ -22,3 +22,7 @@ Branch: `rhoai-3.5-ea`
 - [hardwareprofile-nvidia-l4.yaml](manifests/hardwareprofile-nvidia-l4.yaml)
 - [08-rhoai-3.5-ea-install.md](../08-rhoai-3.5-ea-install.md)
 - [day-1/run-day1-gpu-operators.sh](../day-1/run-day1-gpu-operators.sh)
+
+## Advanced Guardrails track
+
+Branch `advanced-guardrails` (from this EA baseline) keeps TrustyAI Managed so NeMo CRDs exist. No extra Day 2 models are required for scoped/provider demos — see [09-advanced-guardrails-plan.md](../09-advanced-guardrails-plan.md) and Day 4 advanced manifests.
