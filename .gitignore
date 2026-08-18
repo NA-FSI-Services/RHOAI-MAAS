@@ -13,6 +13,9 @@ day-1/client-test-users-setup.log
 # Media (local recordings)
 vids/
 
+# Local cluster dumps (must-gather includes Secrets)
+.local/
+
 # Install / validation artifacts (cluster URLs, minted keys in logs)
 **/*install.log
 day-*/0*.txt
