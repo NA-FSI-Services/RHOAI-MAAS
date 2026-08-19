@@ -25,7 +25,7 @@ Guidance for AI coding agents (Cursor, Copilot, etc.) working in this repository
 
 ## Documentation
 
-- Presenter scripts: [05-demonstration-steps.md](05-demonstration-steps.md) (terminal), [07-ui-based-demonstration-steps.md](07-ui-based-demonstration-steps.md) (RHOAI UI).
+- Presenter scripts: [09-15-min-demo-recap.md](09-15-min-demo-recap.md) (15-min recap), [05-demonstration-steps.md](05-demonstration-steps.md) (terminal), [07-ui-based-demonstration-steps.md](07-ui-based-demonstration-steps.md) (RHOAI UI).
 - Operational recovery: [06-troubleshooting.md](06-troubleshooting.md).
 - Multi-user setup: [MULTI-USER-ACCESS.md](MULTI-USER-ACCESS.md).
 - When adding env vars, update [CONFIGURATION.md](CONFIGURATION.md) and the matching `.example` file.

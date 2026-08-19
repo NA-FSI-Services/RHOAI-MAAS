@@ -2,7 +2,8 @@
 
 Presenter runbook for the RHOAI 3.4 MaaS PoC. Execute **after** completing [04-installation-and-ready-state.md](04-installation-and-ready-state.md).
 
-> **Client-facing UI demo:** For RHOAI Console–first presentation with screenshot placeholders, use [07-ui-based-demonstration-steps.md](07-ui-based-demonstration-steps.md).
+> **Client-facing UI demo:** For RHOAI Console–first presentation with screenshot placeholders, use [07-ui-based-demonstration-steps.md](07-ui-based-demonstration-steps.md).  
+> **15-minute recap:** [09-15-min-demo-recap.md](09-15-min-demo-recap.md).
 
 **Total estimated time:** 40–50 minutes (core demos 1–3 + 7); 60–70 minutes with optional demos 4–6.
 
@@ -757,6 +758,7 @@ If `tool_choice auto` returns **400**, verify Qwen vLLM tool-calling flags and M
 - [04-installation-and-ready-state.md](04-installation-and-ready-state.md) — prerequisites
 - [MULTI-USER-ACCESS.md](MULTI-USER-ACCESS.md) — htpasswd IdP, groups, per-user API keys
 - [07-ui-based-demonstration-steps.md](07-ui-based-demonstration-steps.md) — RHOAI UI presenter script (client demos)
+- [09-15-min-demo-recap.md](09-15-min-demo-recap.md) — 15-minute recap cheat sheet
 - [06-troubleshooting.md](06-troubleshooting.md) — live demo recovery
 - [day-6/README.md](day-6/README.md) — COO + daily traffic
 - [day-7/README.md](day-7/README.md) — OpenShift Lightspeed (optional)

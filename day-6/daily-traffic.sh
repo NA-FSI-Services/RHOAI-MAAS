@@ -44,45 +44,54 @@ run_chat() {
   log "  ${label}: HTTP ${code}"
 }
 
-SIM="${MAAS_URL}/llm/facebook-opt-125m-simulated/v1/chat/completions"
-GRAN="${MAAS_URL}/llm/granite-4-tiny-gpu/v1/chat/completions"
-EXT="${MAAS_URL}/llm/codellama-7b-instruct/v1/chat/completions"
+# Live catalog on this cluster (override via env if a lab still uses Granite/CodeLlama).
+SIM_SLUG="${TRAFFIC_SIM_SLUG:-facebook-opt-125m-simulated}"
+SIM_MODEL="${TRAFFIC_SIM_MODEL:-facebook/opt-125m}"
+GPU_SLUG="${TRAFFIC_GPU_SLUG:-llama-3-1-8b-instruct}"
+GPU_MODEL="${TRAFFIC_GPU_MODEL:-llama-3-1-8b-instruct}"
+EXT_SLUG="${TRAFFIC_EXT_SLUG:-llama-31-70b-cpu}"
+EXT_MODEL="${TRAFFIC_EXT_MODEL:-llama-31-70b-cpu}"
+
+SIM="${MAAS_URL}/llm/${SIM_SLUG}/v1/chat/completions"
+GPU="${MAAS_URL}/llm/${GPU_SLUG}/v1/chat/completions"
+EXT="${MAAS_URL}/llm/${EXT_SLUG}/v1/chat/completions"
 
 log "=== Daily observability traffic ==="
 log "MAAS_URL=${MAAS_URL}"
+log "sim=${SIM_SLUG} gpu=${GPU_SLUG} ext=${EXT_SLUG}"
 
 if $QUICK; then
   LOOPS=1
-  GRAN_TOK=25
+  GPU_TOK=25
 else
   LOOPS=3
-  GRAN_TOK=50
+  GPU_TOK=50
 fi
 
 log "--- Retail analyst (${DEMO_RETAIL_SUB}) — low volume ---"
 for i in $(seq 1 "$LOOPS"); do
-  run_chat "retail-sim-${i}" "$SIM" "$DEMO_RETAIL_KEY" "facebook/opt-125m" \
+  run_chat "retail-sim-${i}" "$SIM" "$DEMO_RETAIL_KEY" "$SIM_MODEL" \
     "\"Retail compliance checklist item ${i} for branch audit.\"" 35
-  run_chat "retail-ext-${i}" "$EXT" "$DEMO_RETAIL_KEY" "codellama-7b-instruct" \
+  run_chat "retail-ext-${i}" "$EXT" "$DEMO_RETAIL_KEY" "$EXT_MODEL" \
     "\"Summarize KYC requirements (${i}).\"" 30
 done
 
-log "--- Risk analytics (${DEMO_RISK_SUB}) — high Granite volume ---"
+log "--- Risk analytics (${DEMO_RISK_SUB}) — high GPU volume ---"
 for i in $(seq 1 "$LOOPS"); do
-  run_chat "risk-granite-${i}" "$GRAN" "$DEMO_RISK_KEY" "granite-4-tiny-gpu" \
+  run_chat "risk-gpu-${i}" "$GPU" "$DEMO_RISK_KEY" "$GPU_MODEL" \
     "\"Analyze credit risk exposure and capital adequacy for portfolio scenario ${i}. Include PD, LGD, and EAD factors.\"" \
-    "$GRAN_TOK"
-  run_chat "risk-ext-${i}" "$EXT" "$DEMO_RISK_KEY" "codellama-7b-instruct" \
+    "$GPU_TOK"
+  run_chat "risk-ext-${i}" "$EXT" "$DEMO_RISK_KEY" "$EXT_MODEL" \
     "\"Draft risk committee memo section ${i}.\"" 40
 done
 
 log "--- Platform ops (${DEMO_PLATFORM_SUB}) — cross-model ---"
 for i in $(seq 1 "$LOOPS"); do
-  run_chat "platform-sim-${i}" "$SIM" "$DEMO_PLATFORM_KEY" "facebook/opt-125m" \
+  run_chat "platform-sim-${i}" "$SIM" "$DEMO_PLATFORM_KEY" "$SIM_MODEL" \
     "\"Platform health check ${i}.\"" 20
-  run_chat "platform-granite-${i}" "$GRAN" "$DEMO_PLATFORM_KEY" "granite-4-tiny-gpu" \
+  run_chat "platform-gpu-${i}" "$GPU" "$DEMO_PLATFORM_KEY" "$GPU_MODEL" \
     "\"Gateway routing validation ${i}.\"" 30
-  run_chat "platform-ext-${i}" "$EXT" "$DEMO_PLATFORM_KEY" "codellama-7b-instruct" \
+  run_chat "platform-ext-${i}" "$EXT" "$DEMO_PLATFORM_KEY" "$EXT_MODEL" \
     "\"External model smoke test ${i}.\"" 25
 done
 

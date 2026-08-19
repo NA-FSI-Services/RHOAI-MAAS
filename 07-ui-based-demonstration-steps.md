@@ -2,7 +2,7 @@
 
 Presenter runbook for demonstrating the RHOAI 3.4 MaaS PoC **primarily through the RHOAI AI Console**, with terminal fallbacks where the UI cannot show a behavior.
 
-Execute **after** [04-installation-and-ready-state.md](04-installation-and-ready-state.md). For curl-first demos, see [05-demonstration-steps.md](05-demonstration-steps.md).
+Execute **after** [04-installation-and-ready-state.md](04-installation-and-ready-state.md). For curl-first demos, see [05-demonstration-steps.md](05-demonstration-steps.md). For a 15-minute recap of prior demos, see [09-15-min-demo-recap.md](09-15-min-demo-recap.md).
 
 **Total estimated time:** 45–55 minutes (core UI demos); 65–75 minutes with optional segments.
 
@@ -544,6 +544,7 @@ If Lightspeed UI is unavailable, use terminal fallback in [05 — OLS](05-demons
 ## Related Documents
 
 - [05-demonstration-steps.md](05-demonstration-steps.md) — curl-first presenter script (terminal proofs)
+- [09-15-min-demo-recap.md](09-15-min-demo-recap.md) — 15-minute recap cheat sheet
 - [04-installation-and-ready-state.md](04-installation-and-ready-state.md) — prerequisites
 - [MULTI-USER-ACCESS.md](MULTI-USER-ACCESS.md) — htpasswd personas and per-user keys
 - [day-6/OBSERVABILITY-TROUBLESHOOTING.md](day-6/OBSERVABILITY-TROUBLESHOOTING.md) — dashboard recovery

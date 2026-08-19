@@ -16,7 +16,7 @@ Centralized Model-as-a-Service governance demonstration on Red Hat OpenShift AI 
 1. Clone this repo and configure secrets — see **[CONFIGURATION.md](CONFIGURATION.md)** (copy `.example` → local `.env` files; never commit keys).
 2. Assess cluster — [02-cluster-current-state.md](02-cluster-current-state.md)
 3. Install — [04-installation-and-ready-state.md](04-installation-and-ready-state.md) (Days 1–7)
-4. Present — [05-demonstration-steps.md](05-demonstration-steps.md) or [07-ui-based-demonstration-steps.md](07-ui-based-demonstration-steps.md)
+4. Present — [09-15-min-demo-recap.md](09-15-min-demo-recap.md) (short recap), [05-demonstration-steps.md](05-demonstration-steps.md), or [07-ui-based-demonstration-steps.md](07-ui-based-demonstration-steps.md)
 
 **AI agents:** read [AGENTS.md](AGENTS.md) before making changes.
 
@@ -52,6 +52,7 @@ echo "MaaS gateway: ${MAAS_URL}"
 | 05 | [Demonstration Steps](05-demonstration-steps.md) | Terminal presenter script |
 | 06 | [Troubleshooting](06-troubleshooting.md) | Known issues and recovery |
 | 07 | [UI-Based Demonstration Steps](07-ui-based-demonstration-steps.md) | RHOAI Console presenter script |
+| 09 | [15-Minute Demo Recap](09-15-min-demo-recap.md) | Short presenter cheat sheet (this lab catalog) |
 | — | [Configuration](CONFIGURATION.md) | Local `.env` files and secrets |
 | — | [Multi-User Access](MULTI-USER-ACCESS.md) | htpasswd personas and per-user API keys |
 | — | [Day 1–7 Results](day-1/README.md) | Per-day install notes under `day-N/` |
